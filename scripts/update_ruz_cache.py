@@ -33,7 +33,7 @@ def main():
 
     today = datetime.now(ZoneInfo("Europe/Moscow")).date()
     expected = set()
-    for offset in range(42):
+    for offset in range(-7, 43):
         day = today + timedelta(days=offset)
         date_text = day.isoformat()
         expected.add(date_text + ".json")
@@ -42,7 +42,7 @@ def main():
         write_json(OUT / (date_text + ".json"), items)
         time.sleep(0.12)
 
-    # Keep only the rolling 42-day cache and the group dictionary.
+    # Keep the previous 7 days (for the current calendar week) and the next 42 days.
     for path in OUT.glob("*.json"):
         if path.name != "groups.json" and path.name not in expected:
             path.unlink()
@@ -50,7 +50,7 @@ def main():
     write_json(OUT / "updated.json", {
         "updatedAt": datetime.now(ZoneInfo("Europe/Moscow")).isoformat(timespec="seconds"),
         "timezone": "Europe/Moscow",
-        "daysCached": 42,
+        "daysCached": 50,\n        "daysPast": 7,\n        "daysAhead": 42,
         "source": "https://ruz.guz.ru/api/",
     })
     print(f"RUZ cache updated: {len(expected)} days, {len(groups) if isinstance(groups, list) else 'groups'} group entries")
