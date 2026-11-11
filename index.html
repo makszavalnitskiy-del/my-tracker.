@@ -50,16 +50,36 @@ button,input,select{font:inherit}button{cursor:pointer}.app{max-width:760px;marg
   </section>
 
   <div class="section-title">Расписание ГУЗ</div>
-  <section class="card">
-    <div class="tabs" id="weekTabs">
-      <button class="pill active tab" data-week="1">Неделя 1 · 9–12 ноя</button>
-      <button class="pill tab" data-week="2">Неделя 2 · 16–20 ноя</button>
+<section class="card">
+  <div class="fields">
+    <div style="grid-column:1/-1">
+      <label class="tiny" for="ruzGroup">Учебная группа</label>
+      <input id="ruzGroup" class="field" list="ruzGroups" placeholder="Например, Г.ПГ.26.С1" autocomplete="off">
+      <datalist id="ruzGroups"></datalist>
     </div>
-    <div class="tabs" id="dayTabs" style="margin-top:8px"></div>
-    <div id="schedule"></div>
-  </section>
+    <div>
+      <label class="tiny" for="ruzSubgroup">Подгруппа</label>
+      <select id="ruzSubgroup" class="field">
+        <option value="">Все подгруппы</option>
+        <option value="1">Подгруппа 1</option>
+        <option value="2">Подгруппа 2</option>
+      </select>
+    </div>
+    <div>
+      <label class="tiny" for="ruzDate">Дата недели</label>
+      <input id="ruzDate" class="field" type="date">
+    </div>
+  </div>
+  <div class="actions" style="margin-top:12px">
+    <button class="btn" id="ruzLoadBtn" style="flex:1">Загрузить расписание</button>
+    <button class="btn secondary" id="ruzTodayBtn">Эта неделя</button>
+  </div>
+  <div class="note" id="ruzStatus" role="status" style="margin-top:10px">Загружаем список групп РУЗ…</div>
+  <div class="tabs" id="ruzDayTabs" style="margin-top:12px"></div>
+  <div id="schedule"><div class="empty">Выбери группу и загрузи расписание.</div></div>
+</section>
 
-  <div class="section-title">Дорога и электрички</div>
+<div class="section-title">Дорога и электрички</div>
 <section class="card">
   <div class="row">
     <strong>Мои маршруты</strong>
@@ -112,6 +132,178 @@ button,input,select{font:inherit}button{cursor:pointer}.app{max-width:760px;marg
   <div class="footer">Мой ритм · личный трекер · данные остаются у тебя на устройстве</div>
 </div>
 <script>
+
+const RUZ_GROUPS_URL="https://ruz.guz.ru/api/dictionary/groups";
+const RUZ_COURSE_URL="https://ruz.guz.ru/api/courseinfo/";
+let ruzGroups=[];
+let ruzWeekData={};
+let ruzSelectedDate="";
+
+function mondayOf(value){
+  const d=new Date(value+"T12:00:00");
+  d.setDate(d.getDate()-(d.getDay()+6)%7);
+  return localDate(d);
+}
+function addDays(value,count){
+  const d=new Date(value+"T12:00:00");
+  d.setDate(d.getDate()+count);
+  return localDate(d);
+}
+function apiArray(value){
+  if(Array.isArray(value))return value;
+  if(value&&typeof value==="object"){
+    for(const key of ["data","items","result","results","groups","courseInfo","courseinfo"]){
+      if(Array.isArray(value[key]))return value[key];
+    }
+  }
+  return [];
+}
+function apiGroupName(value){
+  return String(value.groupName??value.name??value.title??value.group??"").trim();
+}
+function apiGroupId(value){
+  return String(value.groupOid??value.oid??value.id??value.groupId??"");
+}
+function apiLessonDate(value){
+  const raw=String(value.date??value.lessonDate??value.startDate??value.dateStart??"");
+  const match=raw.match(/[0-9]{4}-[0-9]{2}-[0-9]{2}/);
+  return match?match[0]:"";
+}
+function apiLesson(value){
+  const start=String(value.startTime??value.timeStart??value.beginTime??value.start??"").match(/[0-9]{2}:[0-9]{2}/);
+  const finish=String(value.finishTime??value.timeFinish??value.endTime??value.finish??"").match(/[0-9]{2}:[0-9]{2}/);
+  const subject=value.disciplineName??value.subjectName??value.courseName??value.name??value.discipline??"Занятие";
+  const type=value.lessonTypeName??value.typeName??value.lessonType??value.type??"";
+  const room=value.auditoriumName??value.roomName??value.auditorium??value.room??"";
+  const teacher=value.teacherName??value.lecturerName??value.teacher??"";
+  const subgroup=value.subGroupName??value.subgroupName??"";
+  return {
+    time:start&&finish?start[0]+"–"+finish[0]:(start?start[0]:"Время не указано"),
+    subject:String(subject),
+    details:[type,room?("Ауд. "+room):"",teacher,subgroup].filter(Boolean).join(" · "),
+    groupOid:String(value.groupOid??value.group?.groupOid??value.groupId??""),
+    groupName:String(value.groupName??value.group?.groupName??""),
+    subgroupOid:String(value.subGroupOid??value.subgroupOid??""),
+    subgroupName:String(subgroup)
+  };
+}
+async function loadRuzGroups(){
+  const status=document.getElementById("ruzStatus");
+  try{
+    const response=await fetch(RUZ_GROUPS_URL,{headers:{Accept:"application/json"}});
+    if(!response.ok)throw Error("HTTP "+response.status);
+    ruzGroups=apiArray(await response.json());
+    const list=document.getElementById("ruzGroups");
+    list.innerHTML="";
+    ruzGroups.forEach(group=>{
+      const name=apiGroupName(group);
+      if(!name)return;
+      const option=document.createElement("option");
+      option.value=name;
+      list.appendChild(option);
+    });
+    status.textContent=ruzGroups.length
+      ?"Список групп получен. Начни вводить название своей группы."
+      :"Ответ получен, но список групп имеет неизвестный формат. Можно ввести группу вручную.";
+  }catch(error){
+    status.textContent="Не удалось загрузить список групп автоматически ("+error.message+"). Можно попробовать ввести группу вручную.";
+  }
+}
+function selectedRuzGroup(){
+  const name=document.getElementById("ruzGroup").value.trim().toLocaleLowerCase("ru");
+  return ruzGroups.find(group=>apiGroupName(group).toLocaleLowerCase("ru")===name)||null;
+}
+function matchesRuzGroup(raw,selected,name){
+  const itemId=String(raw.groupOid??raw.group?.groupOid??raw.groupId??"");
+  const itemName=String(raw.groupName??raw.group?.groupName??"").toLocaleLowerCase("ru");
+  const selectedId=selected?apiGroupId(selected):"";
+  if(selectedId&&itemId)return selectedId===itemId;
+  if(itemName)return itemName===name.toLocaleLowerCase("ru");
+  return !itemId&&!itemName;
+}
+async function loadRuzWeek(){
+  const name=document.getElementById("ruzGroup").value.trim();
+  const subgroup=document.getElementById("ruzSubgroup").value;
+  const monday=mondayOf(document.getElementById("ruzDate").value||localDate());
+  const status=document.getElementById("ruzStatus");
+  const host=document.getElementById("schedule");
+  const button=document.getElementById("ruzLoadBtn");
+  if(!name){status.textContent="Сначала укажи учебную группу.";return;}
+  button.disabled=true;
+  button.textContent="Загружаем…";
+  status.textContent="Запрашиваем данные РУЗ за 7 дней (отдельно за каждый день)…";
+  host.innerHTML='<div class="empty">Загружаем расписание…</div>';
+  ruzWeekData={};
+  try{
+    const dates=Array.from({length:7},(_,i)=>addDays(monday,i));
+    const results=await Promise.all(dates.map(async date=>{
+      const url=RUZ_COURSE_URL+"?start="+encodeURIComponent(date)+"&finish="+encodeURIComponent(date);
+      const response=await fetch(url,{headers:{Accept:"application/json"}});
+      if(!response.ok)throw Error("HTTP "+response.status+" за "+date);
+      return {date,items:apiArray(await response.json())};
+    }));
+    results.forEach(result=>{
+      const rawItems=result.items.filter(item=>matchesRuzGroup(item,selectedRuzGroup(),name));
+      const lessons=rawItems.map(apiLesson).filter(lesson=>{
+        if(!subgroup)return true;
+        const raw=rawItems.find(item=>apiLesson(item).time===lesson.time);
+        if(!raw)return true;
+        const subId=String(raw.subGroupOid??raw.subgroupOid??"");
+        const subName=String(raw.subGroupName??raw.subgroupName??"");
+        if(!subId&&!subName)return true;
+        return subId===subgroup||subName.includes(subgroup);
+      }).sort((a,b)=>a.time.localeCompare(b.time));
+      ruzWeekData[result.date]=lessons;
+    });
+    data.settings.ruzGroup=name;
+    data.settings.ruzSubgroup=subgroup;
+    data.settings.ruzWeekStart=monday;
+    save();
+    ruzSelectedDate=dates.includes(localDate())?localDate():dates[0];
+    renderRuzWeek();
+    const count=Object.values(ruzWeekData).reduce((sum,list)=>sum+list.length,0);
+    status.textContent="Загружено занятий: "+count+". Источник: API РУЗ ГУЗ.";
+  }catch(error){
+    host.innerHTML='<div class="empty">Не удалось получить расписание: '+error.message+'</div>';
+    status.textContent="Ошибка API. Если браузер блокирует запросы (CORS), потребуется подключить небольшой сервер-посредник.";
+  }finally{
+    button.disabled=false;
+    button.textContent="Загрузить расписание";
+  }
+}
+function renderRuzWeek(){
+  const tabs=document.getElementById("ruzDayTabs");
+  const host=document.getElementById("schedule");
+  const monday=mondayOf(document.getElementById("ruzDate").value||localDate());
+  const dates=Array.from({length:7},(_,i)=>addDays(monday,i));
+  if(!dates.includes(ruzSelectedDate))ruzSelectedDate=dates.includes(localDate())?localDate():dates[0];
+  tabs.innerHTML="";
+  dates.forEach((date,index)=>{
+    const button=document.createElement("button");
+    button.className="pill tab"+(date===ruzSelectedDate?" active":"");
+    button.textContent=["Пн","Вт","Ср","Чт","Пт","Сб","Вс"][index]+" · "+date.slice(8,10);
+    button.onclick=()=>{ruzSelectedDate=date;renderRuzWeek();};
+    tabs.appendChild(button);
+  });
+  const lessons=ruzWeekData[ruzSelectedDate]||[];
+  const title=new Date(ruzSelectedDate+"T12:00:00").toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"});
+  host.innerHTML="";
+  const header=document.createElement("div");
+  header.className="row";
+  header.style.margin="12px 0 4px";
+  const label=document.createElement("strong");label.textContent=title;
+  const count=document.createElement("span");count.className="tiny";count.textContent=lessons.length+" пар";
+  header.append(label,count);host.appendChild(header);
+  if(!lessons.length){const empty=document.createElement("div");empty.className="empty";empty.textContent="Занятий не найдено.";host.appendChild(empty);return;}
+  lessons.forEach(lesson=>{
+    const row=document.createElement("div");row.className="schedule-item";
+    const time=document.createElement("div");time.className="time";time.textContent=lesson.time;
+    const body=document.createElement("div");
+    const subject=document.createElement("div");subject.className="subject";subject.textContent=lesson.subject;
+    const details=document.createElement("div");details.className="room";details.textContent=lesson.details;
+    body.append(subject,details);row.append(time,body);host.appendChild(row);
+  });
+}
 const SCHEDULE = {
   1: {
     "Понедельник, 9 ноября":[["10:10–11:40","Информатика","Практическое занятие · 2/2209"],["11:50–13:20","Геодезия","Лекция · 1/1134"],["14:00–15:30","Информатика","Практическое занятие · 2/2213"]],
@@ -136,7 +328,7 @@ const BASE_TASKS = [
  ["study","Учёба","Повторить материал или закрыть задание","ГУЗ"]
 ];
 const KEY="myRhythmTrackerV1";
-let data=load(), week=1, selectedDay=Object.keys(SCHEDULE[1])[2];
+let data=load();
 function load(){try{return JSON.parse(localStorage.getItem(KEY))||{days:{},settings:{}}}catch(e){return {days:{},settings:{}}}}
 function save(){localStorage.setItem(KEY,JSON.stringify(data));renderStats();renderProgress()}
 function dateKey(){return document.getElementById("dayPicker").value}
@@ -152,7 +344,6 @@ function renderTasks(){
  renderProgress();
 }
 function renderProgress(){let d=dayData(),all=BASE_TASKS.length+d.custom.length,done=Object.values(d.checks).filter(Boolean).length,p=all?Math.round(done/all*100):0;document.getElementById("percent").textContent=p+"%";document.getElementById("doneCount").textContent=`${done} из ${all}`;document.getElementById("progress").style.width=p+"%";document.getElementById("motivation").textContent=p===100?"Отлично. Сегодня ты выполнил весь план.":p>=50?"Хороший темп. Дожми оставшиеся задачи.":p>0?"Каждая отметка — маленькая победа. Продолжай.":"Не нужно делать всё сразу. Начни с одной задачи."}
-function renderSchedule(){let days=Object.keys(SCHEDULE[week]),tabs=document.getElementById("dayTabs");tabs.innerHTML="";if(!days.includes(selectedDay))selectedDay=days[0];days.forEach(day=>{let b=document.createElement("button");b.className="pill tab"+(day===selectedDay?" active":"");b.textContent=day.split(",")[0];b.onclick=()=>{selectedDay=day;renderSchedule()};tabs.appendChild(b)});let list=SCHEDULE[week][selectedDay],host=document.getElementById("schedule");host.innerHTML=`<div class="row" style="margin:14px 0 4px"><strong>${selectedDay}</strong><span class="tiny">${list.length?list.length+" пары":"Свободный день"}</span></div>`;if(!list.length){host.innerHTML+='<div class="empty">Пар нет — день можно посвятить заработку, спорту и развитию.</div>';return}list.forEach(x=>{let div=document.createElement("div");div.className="schedule-item";div.innerHTML=`<div class="time">${x[0]}</div><div><div class="subject"></div><div class="room"></div></div>`;div.querySelector(".subject").textContent=x[1];div.querySelector(".room").textContent=x[2];host.appendChild(div)})}
 function ensureRoutes(){
   if(!Array.isArray(data.settings.routes)){
     data.settings.routes=[
@@ -265,13 +456,19 @@ document.getElementById("addRouteBtn").onclick=()=>{
 };
   function renderStats(){let now=new Date(),total=0,active=0,last7Done=0,last7Total=0,streak=0;for(let i=0;i<7;i++){let dt=new Date(now);dt.setDate(now.getDate()-i);let k=localDate(dt),d=data.days[k];if(d){let count=BASE_TASKS.length+(d.custom||[]).length,done=Object.values(d.checks||{}).filter(Boolean).length;total+=done;if(done)active++;last7Done+=done;last7Total+=count;if(i===streak&&done>0)streak++;else if(i===streak&&i===0&&done===0){}else if(i===streak)break}else{if(i===0){}else if(i===streak)break}}document.getElementById("weekRate").textContent=(last7Total?Math.round(last7Done/last7Total*100):0)+"%";document.getElementById("streak").textContent=streak;document.getElementById("totalDone").textContent=total;document.getElementById("activeDays").textContent=active}
 document.getElementById("dayPicker").value=localDate();document.getElementById("dayPicker").addEventListener("change",renderTasks);
-document.querySelectorAll("[data-week]").forEach(b=>b.addEventListener("click",()=>{week=+b.dataset.week;document.querySelectorAll("[data-week]").forEach(x=>x.classList.toggle("active",x===b));selectedDay=Object.keys(SCHEDULE[week])[0];renderSchedule()}));
 document.getElementById("addTaskBtn").onclick=()=>{let name=prompt("Какую задачу добавить?");if(!name||!name.trim())return;let desc=prompt("Короткое описание (необязательно):")||"";let d=dayData();d.custom.push({id:"custom_"+Date.now(),name:name.trim(),desc,tag:"Моё"});save();renderTasks()};
 document.getElementById("resetDayBtn").onclick=()=>{if(confirm("Снять все отметки за выбранный день?")){let d=dayData();d.checks={};save();renderTasks()}};
 document.getElementById("exportBtn").onclick=()=>{let blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="my-rhythm-backup.json";a.click();URL.revokeObjectURL(a.href)};
 document.getElementById("importBtn").onclick=()=>document.getElementById("importFile").click();
 document.getElementById("importFile").onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let obj=JSON.parse(await f.text());if(!obj.days||!obj.settings)throw Error();data=obj;save();renderTasks();renderRoutes();alert("Резервная копия загружена")}catch(err){alert("Не удалось прочитать файл резервной копии")}};
 document.getElementById("todayLabel").textContent=new Date().toLocaleDateString("ru-RU",{day:"numeric",month:"short"});
-renderTasks();renderSchedule();renderStats();renderRoutes();
+renderTasks();renderStats();renderRoutes();
+document.getElementById("ruzGroup").value=data.settings.ruzGroup||"Г.ПГ.26.С1";
+document.getElementById("ruzSubgroup").value=data.settings.ruzSubgroup||"";
+document.getElementById("ruzDate").value=mondayOf(localDate());
+document.getElementById("ruzLoadBtn").onclick=loadRuzWeek;
+document.getElementById("ruzTodayBtn").onclick=()=>{document.getElementById("ruzDate").value=mondayOf(localDate());loadRuzWeek();};
+document.getElementById("ruzDate").addEventListener("change",()=>{ruzSelectedDate="";});
+loadRuzGroups();
 </script>
 </body></html>
