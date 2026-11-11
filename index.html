@@ -10,7 +10,26 @@
 <style>
 :root{--bg:#0b0d12;--panel:#131722;--panel2:#191f2c;--line:#262d3b;--text:#eef2f8;--muted:#8e9aaf;--accent:#9b8cff;--green:#63d6a4;--orange:#ffbd69;--red:#ff7e8b}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% -10%,#242044 0,transparent 38%),var(--bg);color:var(--text);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
-button,input,select{font:inherit}button{cursor:pointer}.app{max-width:760px;margin:auto;padding:22px 16px 48px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}.brand{font-size:13px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}.date{font-size:13px;color:var(--muted)}h1{font-size:29px;line-height:1.1;margin:7px 0 4px;letter-spacing:-.04em}.sub{color:var(--muted);font-size:14px}.card{background:linear-gradient(145deg,rgba(25,31,44,.97),rgba(17,21,30,.97));border:1px solid var(--line);border-radius:19px;padding:17px;margin:13px 0;box-shadow:0 10px 35px #0002}.hero{padding:20px}.row{display:flex;align-items:center;justify-content:space-between;gap:12px}.progress-wrap{height:9px;background:#272e3c;border-radius:20px;overflow:hidden;margin:13px 0 7px}.progress{height:100%;width:0;background:linear-gradient(90deg,var(--accent),#6bd8c2);border-radius:20px;transition:width .2s}.big{font-size:30px;font-weight:750;letter-spacing:-.04em}.muted{color:var(--muted)}.tiny{font-size:12px;color:var(--muted)}.section-title{font-size:17px;font-weight:700;margin:24px 2px 8px;letter-spacing:-.02em}.pill{border:1px solid var(--line);background:#1a2030;color:var(--text);padding:8px 11px;border-radius:12px;font-size:13px}.pill.active{background:#302b53;border-color:#6f62c3;color:#e7e2ff}.tabs{display:flex;gap:7px;overflow:auto;padding:2px 0 5px}.tab{white-space:nowrap}.task{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #242b38}.task:last-child{border-bottom:0}.check{appearance:none;width:22px;height:22px;border:1.5px solid #59647a;border-radius:7px;flex:none;background:#111620;position:relative}.check:checked{background:var(--green);border-color:var(--green)}.check:checked:after{content:"✓";position:absolute;color:#08150f;font-weight:900;left:4px;top:-1px}.task.done .task-name{text-decoration:line-through;color:#788397}.task-name{font-weight:550}.task-desc{font-size:12px;color:var(--muted);margin-top:2px}.tag{font-size:11px;color:#c3baff;background:#302b53;padding:4px 7px;border-radius:7px;margin-left:auto;white-space:nowrap}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.stat{background:#10151e;border:1px solid var(--line);border-radius:14px;padding:12px}.stat strong{display:block;font-size:22px}.stat span{font-size:11px;color:var(--muted)}.schedule-item{display:grid;grid-template-columns:88px 1fr;gap:12px;padding:11px 0;border-bottom:1px solid #242b38}.schedule-item:last-child{border:0}.time{font-variant-numeric:tabular-nums;color:#b9afff;font-weight:650;font-size:13px}.subject{font-weight:600}.room{font-size:12px;color:var(--muted)}.field{width:100%;background:#0e131c;border:1px solid var(--line);border-radius:10px;color:var(--text);padding:10px 11px;outline:none}.field:focus{border-color:var(--accent)}.fields{display:grid;grid-template-columns:1fr 1fr;gap:9px}.btn{background:#8f82ed;color:#0d0c16;border:0;border-radius:11px;padding:10px 13px;font-weight:700}.btn.secondary{background:#222a39;color:var(--text);border:1px solid var(--line)}.btn.danger{background:#3a2029;color:#ffb4bd}.actions{display:flex;gap:8px;flex-wrap:wrap}.note{font-size:12px;color:var(--muted);line-height:1.5}.dayhead{display:flex;gap:8px;align-items:center;justify-content:space-between}.empty{padding:18px;text-align:center;color:var(--muted)}.barline{height:7px;background:#252d3b;border-radius:10px;overflow:hidden;margin-top:6px}.barline i{display:block;height:100%;background:var(--green);border-radius:10px}.footer{text-align:center;color:#667187;font-size:11px;padding:20px 0}.hidden{display:none!important}
+button,input,select{font:inherit}button{cursor:pointer}.app{max-width:760px;margin:auto;padding:22px 16px 48px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}.brand{font-size:13px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}.date{font-size:13px;color:var(--muted)}h1{font-size:29px;line-height:1.1;margin:7px 0 4px;letter-spacing:-.04em}.sub{color:var(--muted);font-size:14px}.card{background:linear-gradient(145deg,rgba(25,31,44,.97),rgba(17,21,30,.97));border:1px solid var(--line);border-radius:19px;padding:17px;margin:13px 0;box-shadow:0 10px 35px #0002}.hero{padding:20px}.row{display:flex;align-items:center;justify-content:space-between;gap:12px}.progress-wrap{height:9px;background:#272e3c;border-radius:20px;overflow:hidden;margin:13px 0 7px}.progress{height:100%;width:0;background:linear-gradient(90deg,var(--accent),#6bd8c2);border-radius:20px;transition:width .2s}.big{font-size:30px;font-weight:750;letter-spacing:-.04em}.muted{color:var(--muted)}.tiny{font-size:12px;color:var(--muted)}.section-title{font-size:17px;font-weight:700;margin:24px 2px 8px;letter-spacing:-.02em}.pill{border:1px solid var(--line);background:#1a2030;color:var(--text);padding:8px 11px;border-radius:12px;font-size:13px}.pill.active{background:#302b53;border-color:#6f62c3;color:#e7e2ff}.tabs{display:flex;gap:7px;overflow:auto;padding:2px 0 5px}.tab{white-space:nowrap}.task{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #242b38}.task:last-child{border-bottom:0}.check{appearance:none;width:22px;height:22px;border:1.5px solid #59647a;border-radius:7px;flex:none;background:#111620;position:relative}.check:checked{background:var(--green);border-color:var(--green)}.check:checked:after{content:"✓";position:absolute;color:#08150f;font-weight:900;left:4px;top:-1px}.task.done .task-name{text-decoration:line-through;color:#788397}.task-name{font-weight:550}.task-desc{font-size:12px;color:var(--muted);margin-top:2px}
+.daily-tools{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 0 6px;flex-wrap:wrap}
+.daily-switch{display:flex;gap:5px;background:#0e131c;border:1px solid var(--line);padding:3px;border-radius:10px}
+.daily-switch button{border:0;background:transparent;color:var(--muted);padding:6px 9px;border-radius:7px;font-size:12px}
+.daily-switch button.active{background:#302b53;color:#eee9ff}
+.day-plan-summary{font-size:11px;color:var(--muted)}
+.compact-task{display:grid;grid-template-columns:22px minmax(0,1fr) 88px 72px;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid #242b38}
+.compact-task:last-child{border-bottom:0}
+.compact-task .check{width:20px;height:20px}
+.compact-task .task-name{font-size:13px;line-height:1.25}
+.compact-task .task-desc{font-size:11px}
+.task-time,.task-duration{min-width:0;width:100%;background:#0e131c;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:6px 4px;font-size:11px}
+.task-time{font-variant-numeric:tabular-nums}
+.compact-task.done .task-time,.compact-task.done .task-duration{opacity:.55}
+.daily-detail .compact-task{padding:12px 0}
+.daily-detail .task-name{font-size:14px}
+.daily-detail .task-desc{display:block}
+.daily-detail .tag{display:inline-block;margin:5px 0 0}
+@media(max-width:390px){.compact-task{grid-template-columns:20px minmax(0,1fr) 76px 62px;gap:6px}.task-time,.task-duration{font-size:10px;padding:6px 2px}}
+.tag{font-size:11px;color:#c3baff;background:#302b53;padding:4px 7px;border-radius:7px;margin-left:auto;white-space:nowrap}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.stat{background:#10151e;border:1px solid var(--line);border-radius:14px;padding:12px}.stat strong{display:block;font-size:22px}.stat span{font-size:11px;color:var(--muted)}.schedule-item{display:grid;grid-template-columns:88px 1fr;gap:12px;padding:11px 0;border-bottom:1px solid #242b38}.schedule-item:last-child{border:0}.time{font-variant-numeric:tabular-nums;color:#b9afff;font-weight:650;font-size:13px}.subject{font-weight:600}.room{font-size:12px;color:var(--muted)}.field{width:100%;background:#0e131c;border:1px solid var(--line);border-radius:10px;color:var(--text);padding:10px 11px;outline:none}.field:focus{border-color:var(--accent)}.fields{display:grid;grid-template-columns:1fr 1fr;gap:9px}.btn{background:#8f82ed;color:#0d0c16;border:0;border-radius:11px;padding:10px 13px;font-weight:700}.btn.secondary{background:#222a39;color:var(--text);border:1px solid var(--line)}.btn.danger{background:#3a2029;color:#ffb4bd}.actions{display:flex;gap:8px;flex-wrap:wrap}.note{font-size:12px;color:var(--muted);line-height:1.5}.dayhead{display:flex;gap:8px;align-items:center;justify-content:space-between}.empty{padding:18px;text-align:center;color:var(--muted)}.barline{height:7px;background:#252d3b;border-radius:10px;overflow:hidden;margin-top:6px}.barline i{display:block;height:100%;background:var(--green);border-radius:10px}.footer{text-align:center;color:#667187;font-size:11px;padding:20px 0}.hidden{display:none!important}
 @media(min-width:650px){.app{padding-top:35px}.two{display:grid;grid-template-columns:1fr 1fr;gap:13px}.two .card{margin:0}.section-title{margin-top:25px}}
   .route-card{
   background:#10151e;
@@ -45,6 +64,13 @@ button,input,select{font:inherit}button{cursor:pointer}.app{max-width:760px;marg
   <div class="section-title">План на день</div>
   <section class="card">
     <div class="dayhead"><div><strong id="selectedDateLabel">Сегодня</strong><div class="tiny">Отмечай выполненное — данные сохраняются на этом устройстве.</div></div><input id="dayPicker" class="field" type="date" style="max-width:150px"></div>
+    <div class="daily-tools">
+      <div class="daily-switch" role="group" aria-label="Вид плана">
+        <button type="button" id="dailyCompactBtn" class="active">Компактно</button>
+        <button type="button" id="dailyDetailBtn">Подробно</button>
+      </div>
+      <div class="day-plan-summary" id="dayPlanSummary">Можно назначить время задачам</div>
+    </div>
     <div id="dailyTasks"></div>
     <div class="actions" style="margin-top:12px"><button class="btn secondary" id="addTaskBtn">＋ Своя задача</button><button class="btn secondary" id="resetDayBtn">Сбросить день</button></div>
   </section>
@@ -339,14 +365,49 @@ function save(){localStorage.setItem(KEY,JSON.stringify(data));renderStats();ren
 function dateKey(){return document.getElementById("dayPicker").value}
 function dayData(k=dateKey()){if(!data.days[k])data.days[k]={checks:{},custom:[]};return data.days[k]}
 function localDate(d=new Date()){let y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,"0"),day=String(d.getDate()).padStart(2,"0");return `${y}-${m}-${day}`}
+let dailyDetailMode=false;
 function renderTasks(){
- const k=dateKey(),d=dayData(k),host=document.getElementById("dailyTasks");host.innerHTML="";
+ const k=dateKey(),d=dayData(k),host=document.getElementById("dailyTasks");
+ if(!d.plan)d.plan={};
+ host.innerHTML="";
  const all=BASE_TASKS.map(x=>({id:x[0],name:x[1],desc:x[2],tag:x[3]})).concat(d.custom);
- all.forEach(t=>{let row=document.createElement("label");row.className="task"+(d.checks[t.id]?" done":"");row.innerHTML=`<input class="check" type="checkbox" ${d.checks[t.id]?"checked":""}><div style="flex:1"><div class="task-name"></div><div class="task-desc"></div></div><span class="tag"></span>`;
- row.querySelector(".task-name").textContent=t.name;row.querySelector(".task-desc").textContent=t.desc||"";row.querySelector(".tag").textContent=t.tag||"Моё";
- row.querySelector("input").addEventListener("change",e=>{d.checks[t.id]=e.target.checked;save();renderTasks()});host.appendChild(row)});
+ all.sort((a,b)=>{
+   const at=d.plan[a.id]?.time||"",bt=d.plan[b.id]?.time||"";
+   if(at&&bt)return at.localeCompare(bt);
+   if(at)return -1;if(bt)return 1;return 0;
+ });
+ host.className=dailyDetailMode?"daily-detail":"";
+ let planned=0,minutes=0;
+ all.forEach(t=>{
+   const plan=d.plan[t.id]||{},done=!!d.checks[t.id];
+   if(plan.time){planned++;minutes+=Number(plan.duration)||30;}
+   const row=document.createElement("div");row.className="compact-task"+(done?" done":"");
+   const check=document.createElement("input");check.className="check";check.type="checkbox";check.checked=done;
+   check.setAttribute("aria-label","Выполнено: "+t.name);
+   const info=document.createElement("div");info.style.minWidth="0";
+   const title=document.createElement("div");title.className="task-name";title.textContent=t.name;
+   const desc=document.createElement("div");desc.className="task-desc";desc.textContent=t.desc||"";
+   const tag=document.createElement("span");tag.className="tag";tag.textContent=t.tag||"Моё";
+   info.append(title,desc,tag);
+   const time=document.createElement("input");time.type="time";time.className="task-time";time.value=plan.time||"";time.setAttribute("aria-label","Время задачи: "+t.name);time.title="Во сколько выполнить";
+   const duration=document.createElement("select");duration.className="task-duration";duration.setAttribute("aria-label","Длительность: "+t.name);duration.title="Длительность";
+   [15,30,45,60,90,120].forEach(value=>{const option=document.createElement("option");option.value=String(value);option.textContent=value+" мин";duration.appendChild(option)});
+   duration.value=String(plan.duration||30);
+   check.addEventListener("change",()=>{d.checks[t.id]=check.checked;save();renderTasks()});
+   time.addEventListener("change",()=>{d.plan[t.id]={time:time.value,duration:Number(duration.value)||30};if(!time.value)delete d.plan[t.id];save();renderTasks()});
+   duration.addEventListener("change",()=>{d.plan[t.id]={time:time.value,duration:Number(duration.value)||30};save();updatePlanSummary()});
+   row.append(check,info,time,duration);host.appendChild(row);
+ });
  document.getElementById("selectedDateLabel").textContent=k===localDate()?"Сегодня":new Date(k+"T12:00:00").toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"});
+ document.getElementById("dailyCompactBtn").classList.toggle("active",!dailyDetailMode);
+ document.getElementById("dailyDetailBtn").classList.toggle("active",dailyDetailMode);
+ updatePlanSummary(planned,minutes);
  renderProgress();
+}
+function updatePlanSummary(planned,minutes){
+ const d=dayData(),count=planned??Object.values(d.plan||{}).filter(x=>x.time).length;
+ const total=minutes??Object.values(d.plan||{}).filter(x=>x.time).reduce((sum,x)=>sum+(Number(x.duration)||30),0);
+ document.getElementById("dayPlanSummary").textContent=count?count+" задач · "+total+" мин запланировано":"Назначь время задачам";
 }
 function renderProgress(){let d=dayData(),all=BASE_TASKS.length+d.custom.length,done=Object.values(d.checks).filter(Boolean).length,p=all?Math.round(done/all*100):0;document.getElementById("percent").textContent=p+"%";document.getElementById("doneCount").textContent=`${done} из ${all}`;document.getElementById("progress").style.width=p+"%";document.getElementById("motivation").textContent=p===100?"Отлично. Сегодня ты выполнил весь план.":p>=50?"Хороший темп. Дожми оставшиеся задачи.":p>0?"Каждая отметка — маленькая победа. Продолжай.":"Не нужно делать всё сразу. Начни с одной задачи."}
 function ensureRoutes(){
@@ -461,6 +522,8 @@ document.getElementById("addRouteBtn").onclick=()=>{
 };
   function renderStats(){let now=new Date(),total=0,active=0,last7Done=0,last7Total=0,streak=0;for(let i=0;i<7;i++){let dt=new Date(now);dt.setDate(now.getDate()-i);let k=localDate(dt),d=data.days[k];if(d){let count=BASE_TASKS.length+(d.custom||[]).length,done=Object.values(d.checks||{}).filter(Boolean).length;total+=done;if(done)active++;last7Done+=done;last7Total+=count;if(i===streak&&done>0)streak++;else if(i===streak&&i===0&&done===0){}else if(i===streak)break}else{if(i===0){}else if(i===streak)break}}document.getElementById("weekRate").textContent=(last7Total?Math.round(last7Done/last7Total*100):0)+"%";document.getElementById("streak").textContent=streak;document.getElementById("totalDone").textContent=total;document.getElementById("activeDays").textContent=active}
 document.getElementById("dayPicker").value=localDate();document.getElementById("dayPicker").addEventListener("change",renderTasks);
+document.getElementById("dailyCompactBtn").onclick=()=>{dailyDetailMode=false;renderTasks()};
+document.getElementById("dailyDetailBtn").onclick=()=>{dailyDetailMode=true;renderTasks()};
 document.getElementById("addTaskBtn").onclick=()=>{let name=prompt("Какую задачу добавить?");if(!name||!name.trim())return;let desc=prompt("Короткое описание (необязательно):")||"";let d=dayData();d.custom.push({id:"custom_"+Date.now(),name:name.trim(),desc,tag:"Моё"});save();renderTasks()};
 document.getElementById("resetDayBtn").onclick=()=>{if(confirm("Снять все отметки за выбранный день?")){let d=dayData();d.checks={};save();renderTasks()}};
 document.getElementById("exportBtn").onclick=()=>{let blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="my-rhythm-backup.json";a.click();URL.revokeObjectURL(a.href)};
