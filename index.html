@@ -259,7 +259,7 @@ async function loadRuzWeek(){
     const count=Object.values(ruzWeekData).reduce((sum,list)=>sum+list.length,0);
     status.textContent="Загружено занятий: "+count+". Данные РУЗ обновляются автоматически через GitHub Actions.";
   }catch(error){
-    host.innerHTML='<div class="empty">Не удалось получить расписание: '+error.message+'. Если выбрана дата дальше 42 дней, попробуй позже или выбери ближайшую неделю.</div>';
+    host.innerHTML='<div class="empty">Не удалось получить расписание: '+error.message+'. Кэш хранит предыдущие 7 дней и следующие 42 дня. Для более поздней даты выбери ближайшую неделю.</div>';
     status.textContent="Кэш расписания недоступен. Открой GitHub → Actions и проверь выполнение обновления РУЗ.";
   }finally{
     button.disabled=false;
