@@ -50,7 +50,9 @@ def main():
     write_json(OUT / "updated.json", {
         "updatedAt": datetime.now(ZoneInfo("Europe/Moscow")).isoformat(timespec="seconds"),
         "timezone": "Europe/Moscow",
-        "daysCached": 50,\n        "daysPast": 7,\n        "daysAhead": 42,
+        "daysCached": 50,
+        "daysPast": 7,
+        "daysAhead": 42,
         "source": "https://ruz.guz.ru/api/",
     })
     print(f"RUZ cache updated: {len(expected)} days, {len(groups) if isinstance(groups, list) else 'groups'} group entries")
