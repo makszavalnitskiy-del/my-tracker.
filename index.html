@@ -191,6 +191,7 @@ function apiLesson(value){
   return {
     time:pair,
     order:Number(numberStart)||999,
+    orderEnd:Number(numberEnd)||Number(numberStart)||999,
     subject:String(subject),
     details:[type,building,room?("Ауд. "+room):"",teacher,subgroup,stream?("Поток: "+stream):""].filter(Boolean).join(" · "),
     subgroupName:String(subgroup)
@@ -290,7 +291,8 @@ function renderRuzWeek(){
   header.append(label,count);host.appendChild(header);
   if(!lessons.length){const empty=document.createElement("div");empty.className="empty";empty.textContent="Занятий не найдено.";host.appendChild(empty);return;}
   if(ruzShowGaps){
-    const used=new Set(lessons.flatMap(x=>Array.from({length:Math.max(1,x.order?1:0)},()=>x.order)).filter(x=>x>0));
+    const used=new Set();
+    lessons.forEach(x=>{if(x.order<999){for(let n=x.order;n<=Math.max(x.order,x.orderEnd);n++)used.add(n);}});
     const max=Math.max(...used);
     const gaps=[];
     for(let n=1;n<max;n++)if(!used.has(n))gaps.push(n);
