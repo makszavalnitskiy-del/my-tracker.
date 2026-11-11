@@ -73,6 +73,7 @@ button,input,select{font:inherit}button{cursor:pointer}.app{max-width:760px;marg
   <div class="actions" style="margin-top:12px">
     <button class="btn" id="ruzLoadBtn" style="flex:1">Загрузить расписание</button>
     <button class="btn secondary" id="ruzTodayBtn">Эта неделя</button>
+    <button class="btn secondary" id="ruzGapsBtn" type="button">Свободные окна</button>
   </div>
   <div class="note" id="ruzStatus" role="status" style="margin-top:10px">Загружаем список групп РУЗ…</div>
   <div class="tabs" id="ruzDayTabs" style="margin-top:12px"></div>
@@ -133,11 +134,11 @@ button,input,select{font:inherit}button{cursor:pointer}.app{max-width:760px;marg
 </div>
 <script>
 
-const RUZ_GROUPS_URL="https://ruz.guz.ru/api/dictionary/groups";
-const RUZ_COURSE_URL="https://ruz.guz.ru/api/courseinfo/";
+const RUZ_DATA_BASE="data/ruz/";
 let ruzGroups=[];
 let ruzWeekData={};
 let ruzSelectedDate="";
+let ruzShowGaps=false;
 
 function mondayOf(value){
   const d=new Date(value+"T12:00:00");
@@ -159,40 +160,51 @@ function apiArray(value){
   return [];
 }
 function apiGroupName(value){
-  return String(value.groupName??value.name??value.title??value.group??"").trim();
+  return String(value.groupName??value.groupNumber??value.name??value.title??value.group??"").trim();
 }
 function apiGroupId(value){
   return String(value.groupOid??value.oid??value.id??value.groupId??"");
 }
-function apiLessonDate(value){
-  const raw=String(value.date??value.lessonDate??value.startDate??value.dateStart??"");
-  const match=raw.match(/[0-9]{4}-[0-9]{2}-[0-9]{2}/);
-  return match?match[0]:"";
+function groupMatches(value,selectedId,name){
+  const n=String(value.groupName??value.groupNumber??value.name??"").trim().toLocaleLowerCase("ru");
+  const id=String(value.groupOid??value.oid??value.id??value.groupId??"");
+  return (selectedId&&id&&selectedId===id)||(!selectedId&&n===name.toLocaleLowerCase("ru"))||n===name.toLocaleLowerCase("ru");
+}
+function matchesRuzGroup(raw,selected,name){
+  const selectedId=selected?apiGroupId(selected):"";
+  if(groupMatches(raw,selectedId,name))return true;
+  if(Array.isArray(raw.groups))return raw.groups.some(group=>groupMatches(group,selectedId,name));
+  return false;
 }
 function apiLesson(value){
-  const start=String(value.startTime??value.timeStart??value.beginTime??value.start??"").match(/[0-9]{2}:[0-9]{2}/);
-  const finish=String(value.finishTime??value.timeFinish??value.endTime??value.finish??"").match(/[0-9]{2}:[0-9]{2}/);
-  const subject=value.disciplineName??value.subjectName??value.courseName??value.name??value.discipline??"Занятие";
-  const type=value.lessonTypeName??value.typeName??value.lessonType??value.type??"";
-  const room=value.auditoriumName??value.roomName??value.auditorium??value.room??"";
-  const teacher=value.teacherName??value.lecturerName??value.teacher??"";
+  const numberStart=value.lessonNumberStart??value.lessonNumber??value.number??"";
+  const numberEnd=value.lessonNumberEnd??numberStart;
+  const pair=numberStart?("Пара "+numberStart+(numberEnd&&numberEnd!==numberStart?"–"+numberEnd:"")):"Время не указано";
+  const subject=value.discipline??value.disciplineName??value.subjectName??value.courseName??value.name??"Занятие";
+  const type=value.kindOfWork??value.lessonTypeName??value.typeName??value.lessonType??value.type??"";
+  const room=value.auditorium??value.auditoriumName??value.roomName??value.room??"";
+  const building=value.building??value.buildingName??"";
+  const lecturers=Array.isArray(value.listOfLecturers)?value.listOfLecturers.map(x=>x.lecturer??x.lecturer_title??x.name).filter(Boolean):[];
+  const teacher=lecturers.join(", ")||value.teacherName||value.lecturerName||value.teacher||"";
   const subgroup=value.subGroupName??value.subgroupName??"";
+  const stream=value.streamName??"";
   return {
-    time:start&&finish?start[0]+"–"+finish[0]:(start?start[0]:"Время не указано"),
+    time:pair,
+    order:Number(numberStart)||999,
     subject:String(subject),
-    details:[type,room?("Ауд. "+room):"",teacher,subgroup].filter(Boolean).join(" · "),
-    groupOid:String(value.groupOid??value.group?.groupOid??value.groupId??""),
-    groupName:String(value.groupName??value.group?.groupName??""),
-    subgroupOid:String(value.subGroupOid??value.subgroupOid??""),
+    details:[type,building,room?("Ауд. "+room):"",teacher,subgroup,stream?("Поток: "+stream):""].filter(Boolean).join(" · "),
     subgroupName:String(subgroup)
   };
+}
+async function readRuzJson(path){
+  const response=await fetch(RUZ_DATA_BASE+path+"?v="+Date.now(),{cache:"no-store"});
+  if(!response.ok)throw Error("Кэш РУЗ пока не обновлён ("+response.status+")");
+  return response.json();
 }
 async function loadRuzGroups(){
   const status=document.getElementById("ruzStatus");
   try{
-    const response=await fetch(RUZ_GROUPS_URL,{headers:{Accept:"application/json"}});
-    if(!response.ok)throw Error("HTTP "+response.status);
-    ruzGroups=apiArray(await response.json());
+    ruzGroups=apiArray(await readRuzJson("groups.json"));
     const list=document.getElementById("ruzGroups");
     list.innerHTML="";
     ruzGroups.forEach(group=>{
@@ -203,23 +215,15 @@ async function loadRuzGroups(){
       list.appendChild(option);
     });
     status.textContent=ruzGroups.length
-      ?"Список групп получен. Начни вводить название своей группы."
-      :"Ответ получен, но список групп имеет неизвестный формат. Можно ввести группу вручную.";
+      ?"Список групп загружен. Выбери свою группу и нажми «Загрузить расписание»."
+      :"Кэш групп пуст. Можно указать группу вручную.";
   }catch(error){
-    status.textContent="Не удалось загрузить список групп автоматически ("+error.message+"). Можно попробовать ввести группу вручную.";
+    status.textContent="Не удалось загрузить кэш групп: "+error.message+". Проверь GitHub Actions.";
   }
 }
 function selectedRuzGroup(){
   const name=document.getElementById("ruzGroup").value.trim().toLocaleLowerCase("ru");
   return ruzGroups.find(group=>apiGroupName(group).toLocaleLowerCase("ru")===name)||null;
-}
-function matchesRuzGroup(raw,selected,name){
-  const itemId=String(raw.groupOid??raw.group?.groupOid??raw.groupId??"");
-  const itemName=String(raw.groupName??raw.group?.groupName??"").toLocaleLowerCase("ru");
-  const selectedId=selected?apiGroupId(selected):"";
-  if(selectedId&&itemId)return selectedId===itemId;
-  if(itemName)return itemName===name.toLocaleLowerCase("ru");
-  return !itemId&&!itemName;
 }
 async function loadRuzWeek(){
   const name=document.getElementById("ruzGroup").value.trim();
@@ -231,28 +235,18 @@ async function loadRuzWeek(){
   if(!name){status.textContent="Сначала укажи учебную группу.";return;}
   button.disabled=true;
   button.textContent="Загружаем…";
-  status.textContent="Запрашиваем данные РУЗ за 7 дней (отдельно за каждый день)…";
+  status.textContent="Получаем расписание из обновляемого кэша РУЗ…";
   host.innerHTML='<div class="empty">Загружаем расписание…</div>';
   ruzWeekData={};
   try{
     const dates=Array.from({length:7},(_,i)=>addDays(monday,i));
-    const results=await Promise.all(dates.map(async date=>{
-      const url=RUZ_COURSE_URL+"?start="+encodeURIComponent(date)+"&finish="+encodeURIComponent(date);
-      const response=await fetch(url,{headers:{Accept:"application/json"}});
-      if(!response.ok)throw Error("HTTP "+response.status+" за "+date);
-      return {date,items:apiArray(await response.json())};
-    }));
+    const selected=selectedRuzGroup();
+    const results=await Promise.all(dates.map(async date=>({date,items:apiArray(await readRuzJson(date+".json"))})));
     results.forEach(result=>{
-      const rawItems=result.items.filter(item=>matchesRuzGroup(item,selectedRuzGroup(),name));
-      const lessons=rawItems.map(apiLesson).filter(lesson=>{
-        if(!subgroup)return true;
-        const raw=rawItems.find(item=>apiLesson(item).time===lesson.time);
-        if(!raw)return true;
-        const subId=String(raw.subGroupOid??raw.subgroupOid??"");
-        const subName=String(raw.subGroupName??raw.subgroupName??"");
-        if(!subId&&!subName)return true;
-        return subId===subgroup||subName.includes(subgroup);
-      }).sort((a,b)=>a.time.localeCompare(b.time));
+      const lessons=result.items.filter(item=>matchesRuzGroup(item,selected,name)).filter(item=>{
+        const sub=String(item.subGroupName??item.subgroupName??"");
+        return !subgroup||!sub||new RegExp("\\("+subgroup+"\\)").test(sub)||sub.trim()===subgroup;
+      }).map(apiLesson).sort((a,b)=>a.order-b.order);
       ruzWeekData[result.date]=lessons;
     });
     data.settings.ruzGroup=name;
@@ -262,10 +256,10 @@ async function loadRuzWeek(){
     ruzSelectedDate=dates.includes(localDate())?localDate():dates[0];
     renderRuzWeek();
     const count=Object.values(ruzWeekData).reduce((sum,list)=>sum+list.length,0);
-    status.textContent="Загружено занятий: "+count+". Источник: API РУЗ ГУЗ.";
+    status.textContent="Загружено занятий: "+count+". Данные РУЗ обновляются автоматически через GitHub Actions.";
   }catch(error){
-    host.innerHTML='<div class="empty">Не удалось получить расписание: '+error.message+'</div>';
-    status.textContent="Ошибка API. Если браузер блокирует запросы (CORS), потребуется подключить небольшой сервер-посредник.";
+    host.innerHTML='<div class="empty">Не удалось получить расписание: '+error.message+'. Если выбрана дата дальше 42 дней, попробуй позже или выбери ближайшую неделю.</div>';
+    status.textContent="Кэш расписания недоступен. Открой GitHub → Actions и проверь выполнение обновления РУЗ.";
   }finally{
     button.disabled=false;
     button.textContent="Загрузить расписание";
@@ -295,12 +289,21 @@ function renderRuzWeek(){
   const count=document.createElement("span");count.className="tiny";count.textContent=lessons.length+" пар";
   header.append(label,count);host.appendChild(header);
   if(!lessons.length){const empty=document.createElement("div");empty.className="empty";empty.textContent="Занятий не найдено.";host.appendChild(empty);return;}
+  if(ruzShowGaps){
+    const used=new Set(lessons.flatMap(x=>Array.from({length:Math.max(1,x.order?1:0)},()=>x.order)).filter(x=>x>0));
+    const max=Math.max(...used);
+    const gaps=[];
+    for(let n=1;n<max;n++)if(!used.has(n))gaps.push(n);
+    const gap=document.createElement("div");gap.className="note";gap.style.margin="8px 0";
+    gap.textContent=gaps.length?"Свободные окна: между парами "+gaps.join(", ")+".":"Свободных окон между занятиями не найдено.";
+    host.appendChild(gap);
+  }
   lessons.forEach(lesson=>{
     const row=document.createElement("div");row.className="schedule-item";
     const time=document.createElement("div");time.className="time";time.textContent=lesson.time;
     const body=document.createElement("div");
     const subject=document.createElement("div");subject.className="subject";subject.textContent=lesson.subject;
-    const details=document.createElement("div");details.className="room";details.textContent=lesson.details;
+    const details=document.createElement("div");details.className="room";details.textContent=lesson.details||"Дополнительные сведения отсутствуют";
     body.append(subject,details);row.append(time,body);host.appendChild(row);
   });
 }
@@ -468,6 +471,7 @@ document.getElementById("ruzSubgroup").value=data.settings.ruzSubgroup||"";
 document.getElementById("ruzDate").value=mondayOf(localDate());
 document.getElementById("ruzLoadBtn").onclick=loadRuzWeek;
 document.getElementById("ruzTodayBtn").onclick=()=>{document.getElementById("ruzDate").value=mondayOf(localDate());loadRuzWeek();};
+document.getElementById("ruzGapsBtn").onclick=()=>{ruzShowGaps=!ruzShowGaps;document.getElementById("ruzGapsBtn").textContent=ruzShowGaps?"Скрыть окна":"Свободные окна";renderRuzWeek();};
 document.getElementById("ruzDate").addEventListener("change",()=>{ruzSelectedDate="";});
 loadRuzGroups();
 </script>
