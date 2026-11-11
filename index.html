@@ -266,11 +266,10 @@ document.getElementById("dayPicker").value=localDate();document.getElementById("
 document.querySelectorAll("[data-week]").forEach(b=>b.addEventListener("click",()=>{week=+b.dataset.week;document.querySelectorAll("[data-week]").forEach(x=>x.classList.toggle("active",x===b));selectedDay=Object.keys(SCHEDULE[week])[0];renderSchedule()}));
 document.getElementById("addTaskBtn").onclick=()=>{let name=prompt("Какую задачу добавить?");if(!name||!name.trim())return;let desc=prompt("Короткое описание (необязательно):")||"";let d=dayData();d.custom.push({id:"custom_"+Date.now(),name:name.trim(),desc,tag:"Моё"});save();renderTasks()};
 document.getElementById("resetDayBtn").onclick=()=>{if(confirm("Снять все отметки за выбранный день?")){let d=dayData();d.checks={};save();renderTasks()}};
-["trainOut","trainBack"].forEach(id=>{let el=document.getElementById(id);el.value=data.settings[id]||"";el.addEventListener("input",()=>{data.settings[id]=el.value;save()})});
 document.getElementById("exportBtn").onclick=()=>{let blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="my-rhythm-backup.json";a.click();URL.revokeObjectURL(a.href)};
 document.getElementById("importBtn").onclick=()=>document.getElementById("importFile").click();
-document.getElementById("importFile").onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let obj=JSON.parse(await f.text());if(!obj.days||!obj.settings)throw Error();data=obj;save();renderTasks();document.getElementById("trainOut").value=data.settings.trainOut||"";document.getElementById("trainBack").value=data.settings.trainBack||"";alert("Резервная копия загружена")}catch(err){alert("Не удалось прочитать файл резервной копии")}};
+document.getElementById("importFile").onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let obj=JSON.parse(await f.text());if(!obj.days||!obj.settings)throw Error();data=obj;save();renderTasks();renderRoutes();alert("Резервная копия загружена")}catch(err){alert("Не удалось прочитать файл резервной копии")}};
 document.getElementById("todayLabel").textContent=new Date().toLocaleDateString("ru-RU",{day:"numeric",month:"short"});
-renderTasks();renderSchedule();renderStats();
+renderTasks();renderSchedule();renderStats();renderRoutes();
 </script>
 </body></html>
