@@ -43,6 +43,55 @@ button,input,select{font:inherit}button{cursor:pointer}.app{max-width:760px;marg
 .pair-foot{font-size:10px;color:var(--green);margin-top:4px}
 @media(max-width:390px){.live-caption,.live-foot{font-size:11px}}.field{width:100%;background:#0e131c;border:1px solid var(--line);border-radius:10px;color:var(--text);padding:10px 11px;outline:none}.field:focus{border-color:var(--accent)}.fields{display:grid;grid-template-columns:1fr 1fr;gap:9px}.btn{background:#8f82ed;color:#0d0c16;border:0;border-radius:11px;padding:10px 13px;font-weight:700}.btn.secondary{background:#222a39;color:var(--text);border:1px solid var(--line)}.btn.danger{background:#3a2029;color:#ffb4bd}.actions{display:flex;gap:8px;flex-wrap:wrap}.note{font-size:12px;color:var(--muted);line-height:1.5}.dayhead{display:flex;gap:8px;align-items:center;justify-content:space-between}.empty{padding:18px;text-align:center;color:var(--muted)}.barline{height:7px;background:#252d3b;border-radius:10px;overflow:hidden;margin-top:6px}.barline i{display:block;height:100%;background:var(--green);border-radius:10px}.footer{text-align:center;color:#667187;font-size:11px;padding:20px 0}.hidden{display:none!important}
 @media(min-width:650px){.app{padding-top:35px}.two{display:grid;grid-template-columns:1fr 1fr;gap:13px}.two .card{margin:0}.section-title{margin-top:25px}}
+/* Единое выравнивание элементов интерфейса */
+button,input,select,textarea{box-sizing:border-box;line-height:1.25}
+button{min-height:40px;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.field,select.field,input.field,textarea.field{display:block;width:100%;min-width:0;min-height:42px;margin:0}
+.fields{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:end}
+.fields>div{min-width:0}
+.fields label,.route-card label{min-height:18px}
+.actions{align-items:stretch}
+.actions>.btn{min-height:42px;display:inline-flex;align-items:center;justify-content:center}
+.dayhead{align-items:center}
+.dayhead>div{min-width:0;flex:1}
+.dayhead>.field{flex:0 0 150px;max-width:150px}
+.tabs{align-items:center}
+.tabs .tab{min-height:36px;display:inline-flex;align-items:center;justify-content:center}
+.task>span:first-child,.two .row>span{width:26px;min-width:26px;display:inline-flex;align-items:center;justify-content:center;text-align:center;line-height:1}
+.stats{align-items:stretch}
+.stat{min-width:0;min-height:82px;display:flex;flex-direction:column;justify-content:center}
+.stat strong,.stat span{overflow-wrap:anywhere}
+.compact-task{grid-template-columns:22px minmax(0,1fr) 82px 68px;align-items:center}
+.compact-task>div{min-width:0}
+.task-time,.task-duration{height:36px;min-height:36px;text-align:center;align-self:center}
+.schedule-item{grid-template-columns:96px minmax(0,1fr);align-items:start}
+.schedule-item>div{min-width:0}
+.time{white-space:nowrap}
+.route-card .field{margin-top:5px}
+.route-card label{width:100%}
+.route-card .actions{display:flex;align-items:center}
+.route-card .actions .btn{min-width:130px}
+.live-caption,.live-foot{align-items:center;flex-wrap:wrap}
+@media(max-width:430px){
+  .app{padding-left:12px;padding-right:12px}
+  .card{padding:14px}
+  .fields{gap:8px}
+  .actions{gap:7px}
+  .actions>.btn{flex:1 1 auto;padding:9px 10px;font-size:13px}
+  .dayhead{align-items:flex-start}
+  .dayhead>.field{flex:0 0 132px;max-width:132px;padding:9px 7px}
+  .compact-task{grid-template-columns:20px minmax(64px,1fr) 72px 62px;gap:6px}
+  .task-time,.task-duration{font-size:10px;padding:5px 1px}
+  .schedule-item{grid-template-columns:88px minmax(0,1fr);gap:9px}
+  .time{font-size:12px}
+  .stats{gap:7px}
+  .stat{padding:10px;min-height:76px}
+}
+@media(max-width:350px){
+  .compact-task{grid-template-columns:19px minmax(55px,1fr) 66px 56px;gap:5px}
+  .dayhead>.field{flex-basis:118px;max-width:118px}
+  .schedule-item{grid-template-columns:80px minmax(0,1fr);gap:7px}
+}
   .route-card{
   background:#10151e;
   border:1px solid var(--line);
