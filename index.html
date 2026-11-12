@@ -639,6 +639,13 @@ function renderProgress(){let d=dayData(),all=BASE_TASKS.length+d.custom.length,
 function ensureRoutes(){
   if(!Array.isArray(data.settings.routes)){data.settings.routes=[];save();}
 }
+window.MyRhythmAppData={
+  saveRoute(route){
+    ensureRoutes();
+    const exists=data.settings.routes.some(x=>x.fromStation?.id===route.fromStation?.id&&x.toStation?.id===route.toStation?.id);
+    if(!exists){data.settings.routes.unshift(route);save();renderRoutes();}
+  }
+};
 function renderRoutes(){
   ensureRoutes();
   const host=document.getElementById("routesList");
@@ -696,5 +703,6 @@ document.getElementById("ruzNextPeriod").onclick=()=>shiftRuzPeriod(1);
 loadRuzGroups();
 setInterval(()=>{if(ruzWeekData[ruzSelectedDate])renderRuzWeek();},60000);
 </script>
+<script src="assets/js/config.js"></script>
 <script src="assets/js/rhythm-features.js"></script>
 </body></html>
