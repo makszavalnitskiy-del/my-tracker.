@@ -219,32 +219,40 @@ button{min-height:40px;display:inline-flex;align-items:center;justify-content:ce
 
 
 
-<div class="section-title" id="transportSection">Транспорт и маршруты</div>
-<section class="card">
-  <div class="row">
-    <strong>Мои маршруты</strong>
-    <span class="tag">Настраиваемые</span>
-  </div>
-
-  <p class="note">
-    Добавляй любые станции отправления и прибытия.
-    Маршруты сохраняются на этом устройстве.
-  </p>
-
-  <div id="routesList"></div>
-
-  <button class="btn" id="addRouteBtn" style="width:100%;margin-top:12px">
-    ＋ Добавить маршрут
-  </button>
-
-  <p class="note" style="margin-top:13px">
-    Автоматическое расписание подключим после настройки API.
-  </p>
+<div class="section-title" id="transportSection">Электрички и маршруты</div>
+<section class="card train-search-card">
+  <div class="train-search-heading"><div><strong>Куда отправимся?</strong><div class="note">Найди электричку между двумя станциями</div></div><span class="train-badge">↗ Пригородные</span></div>
+  <form id="trainSearchForm" class="train-form">
+    <div class="station-field-wrap">
+      <label for="trainFrom">Откуда</label>
+      <input id="trainFrom" class="field" type="search" autocomplete="off" placeholder="Начни вводить станцию" required>
+      <div id="trainFromSuggestions" class="station-suggestions" role="listbox"></div>
+      <div id="trainFromSelected" class="station-selected"></div>
+    </div>
+    <button type="button" id="swapTrainStations" class="swap-stations" title="Поменять станции местами" aria-label="Поменять станции местами">⇅</button>
+    <div class="station-field-wrap">
+      <label for="trainTo">Куда</label>
+      <input id="trainTo" class="field" type="search" autocomplete="off" placeholder="Станция прибытия" required>
+      <div id="trainToSuggestions" class="station-suggestions" role="listbox"></div>
+      <div id="trainToSelected" class="station-selected"></div>
+    </div>
+    <label class="train-date-label" for="trainDate">Дата поездки</label>
+    <input id="trainDate" class="field" type="date" required>
+    <button class="btn train-submit" id="trainSearchButton" type="submit">Найти электрички <span>→</span></button>
+  </form>
+  <div id="trainSearchStatus" class="train-status" aria-live="polite">Введи название станции и выбери точный вариант из подсказок.</div>
+  <div id="trainResults" class="train-results"></div>
+  <div class="train-attribution">Расписание предоставляется Яндекс Расписаниями. Время указано местное для станций.</div>
+</section>
+<section class="card saved-routes-card">
+  <div class="row"><strong>Закреплённые маршруты</strong><span class="tag">Только у тебя</span></div>
+  <p class="note">Сохраняй часто используемые направления, чтобы искать их в один клик.</p>
+  <div id="routesList"><div class="empty">Пока нет сохранённых маршрутов.</div></div>
 </section>
 
-<div class="section-title" id="materialsSection">Мои материалы</div>
+<div class="section-title" id="materialsSection">Мои материалы <button type="button" class="library-plus" id="libraryQuickAdd" aria-label="Добавить файлы" title="Добавить файлы">＋</button></div>
 <section class="card library-card">
-<div class="library-intro"><div class="library-mark"><span>✦</span></div><div><strong>Личная учебная библиотека</strong><div class="note">Учебники, лекции, методички и презентации в одном месте.</div></div></div>
+<div class="library-intro"><div class="library-mark"><span>✦</span></div><div><strong>Личная учебная библиотека</strong><div class="note">Добавляй свои файлы без регистрации — они сохраняются только в этом браузере на твоём устройстве.</div></div></div>
 <div class="library-upload"><label class="library-drop" for="libraryFiles"><span class="library-upload-icon">＋</span><strong>Добавить учебные файлы</strong><span class="note">PDF, DOCX, PPTX, XLSX, TXT, изображения и другие документы · до 50 МБ на файл</span></label><input id="libraryFiles" type="file" multiple class="hidden" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.rtf,.odt,.ods,.jpg,.jpeg,.png,.webp"></div>
 <div class="library-tools"><input id="librarySearch" class="field" type="search" placeholder="Поиск по названию и предмету"><select id="libraryFilter" class="field"><option value="">Все предметы</option></select></div>
 <div id="libraryList"><div class="empty">Здесь появятся твои учебные материалы.</div></div>
@@ -629,115 +637,32 @@ function renderDaySummary(){
 }
 function renderProgress(){let d=dayData(),all=BASE_TASKS.length+d.custom.length,done=Object.values(d.checks).filter(Boolean).length,p=all?Math.round(done/all*100):0;document.getElementById("percent").textContent=p+"%";document.getElementById("doneCount").textContent=`${done} из ${all}`;document.getElementById("progress").style.width=p+"%";document.getElementById("motivation").textContent=p===100?"Отлично. Сегодня ты выполнил весь план.":p>=50?"Хороший темп. Дожми оставшиеся задачи.":p>0?"Каждая отметка — маленькая победа. Продолжай.":"Не нужно делать всё сразу. Начни с одной задачи."}
 function ensureRoutes(){
-  if(!Array.isArray(data.settings.routes)){
-    data.settings.routes=[
-      {
-        id:"route_1",
-        from:"Львовская",
-        to:"Курская",
-        date:localDate()
-      },
-      {
-        id:"route_2",
-        from:"Курская",
-        to:"Львовская",
-        date:localDate()
-      }
-    ];
-    save();
-  }
+  if(!Array.isArray(data.settings.routes)){data.settings.routes=[];save();}
 }
-
 function renderRoutes(){
   ensureRoutes();
-
   const host=document.getElementById("routesList");
+  if(!host)return;
   host.innerHTML="";
-
+  if(!data.settings.routes.length){host.innerHTML='<div class="empty">Сохрани первый маршрут после поиска электрички.</div>';return;}
   data.settings.routes.forEach(route=>{
-    const card=document.createElement("div");
-    card.className="route-card";
-
-    const title=document.createElement("strong");
-    title.textContent=route.from+" → "+route.to;
-    card.appendChild(title);
-
-    const fromLabel=document.createElement("label");
-    fromLabel.textContent="Станция отправления";
-    const from=document.createElement("input");
-    from.className="field";
-    from.value=route.from;
-    from.placeholder="Например, Львовская";
-    fromLabel.appendChild(from);
-    card.appendChild(fromLabel);
-
-    const toLabel=document.createElement("label");
-    toLabel.textContent="Станция прибытия";
-    const to=document.createElement("input");
-    to.className="field";
-    to.value=route.to;
-    to.placeholder="Например, Курская";
-    toLabel.appendChild(to);
-    card.appendChild(toLabel);
-
-    const dateLabel=document.createElement("label");
-    dateLabel.textContent="Дата поездки";
-    const date=document.createElement("input");
-    date.type="date";
-    date.className="field";
-    date.value=route.date||localDate();
-    dateLabel.appendChild(date);
-    card.appendChild(dateLabel);
-
-    const actions=document.createElement("div");
-    actions.className="actions";
-
-    const remove=document.createElement("button");
-    remove.className="btn danger";
-    remove.textContent="Удалить маршрут";
-    remove.type="button";
-
-    remove.onclick=()=>{
-      if(!confirm("Удалить этот маршрут?"))return;
-      data.settings.routes=data.settings.routes.filter(
-        item=>item.id!==route.id
-      );
-      save();
-      renderRoutes();
+    const item=document.createElement("div");item.className="saved-route";
+    const info=document.createElement("div");info.className="saved-route-info";
+    const title=document.createElement("strong");title.textContent=(route.from||route.fromStation?.title||"Станция")+" → "+(route.to||route.toStation?.title||"Станция");
+    const sub=document.createElement("span");sub.textContent=route.date||"Дата не выбрана";
+    info.append(title,sub);
+    const actions=document.createElement("div");actions.className="saved-route-actions";
+    const use=document.createElement("button");use.type="button";use.textContent="Повторить";use.onclick=()=>{
+      if(!route.fromStation||!route.toStation){alert("Этот старый маршрут нужно выбрать заново через поиск станций.");return;}
+      window.MyRhythmTrains?.restore(route);
+      document.getElementById("transportSection").scrollIntoView({behavior:"smooth"});
     };
-
-    actions.appendChild(remove);
-    card.appendChild(actions);
-
-    const update=()=>{
-      route.from=from.value.trim();
-      route.to=to.value.trim();
-      route.date=date.value;
-      save();
-      title.textContent=route.from+" → "+route.to;
+    const remove=document.createElement("button");remove.type="button";remove.textContent="×";remove.title="Удалить маршрут";remove.onclick=()=>{
+      data.settings.routes=data.settings.routes.filter(x=>x.id!==route.id);save();renderRoutes();
     };
-
-    from.addEventListener("change",update);
-    to.addEventListener("change",update);
-    date.addEventListener("change",update);
-
-    host.appendChild(card);
+    actions.append(use,remove);item.append(info,actions);host.appendChild(item);
   });
 }
-
-document.getElementById("addRouteBtn").onclick=()=>{
-  ensureRoutes();
-
-  data.settings.routes.push({
-    id:"route_"+Date.now(),
-    from:"",
-    to:"",
-    date:localDate()
-  });
-
-  save();
-  renderRoutes();
-};
   function renderStats(){let now=new Date(),total=0,active=0,last7Done=0,last7Total=0,streak=0;for(let i=0;i<7;i++){let dt=new Date(now);dt.setDate(now.getDate()-i);let k=localDate(dt),d=data.days[k];if(d){let count=BASE_TASKS.length+(d.custom||[]).length,done=Object.values(d.checks||{}).filter(Boolean).length;total+=done;if(done)active++;last7Done+=done;last7Total+=count;if(i===streak&&done>0)streak++;else if(i===streak&&i===0&&done===0){}else if(i===streak)break}else{if(i===0){}else if(i===streak)break}}document.getElementById("weekRate").textContent=(last7Total?Math.round(last7Done/last7Total*100):0)+"%";document.getElementById("streak").textContent=streak;document.getElementById("totalDone").textContent=total;document.getElementById("activeDays").textContent=active}
 document.getElementById("dayPicker").value=localDate();
 const carriedToday=carryIncompleteCustomTasksToToday();
