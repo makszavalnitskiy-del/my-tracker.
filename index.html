@@ -6,7 +6,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0b0d12">
-<title>Мой ритм — личный трекер</title>
+<title>Мой ритм — пространство студента</title>
+<link rel="stylesheet" href="assets/css/rhythm.css">
 <style>
 :root{--bg:#0b0d12;--panel:#131722;--panel2:#191f2c;--line:#262d3b;--text:#eef2f8;--muted:#8e9aaf;--accent:#9b8cff;--green:#63d6a4;--orange:#ffbd69;--red:#ff7e8b}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% -10%,#242044 0,transparent 38%),var(--bg);color:var(--text);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
@@ -146,8 +147,8 @@ button{min-height:40px;display:inline-flex;align-items:center;justify-content:ce
 </head>
 <body>
 <div class="app">
-  <header class="top"><div><div class="brand">PERSONAL TRACKER</div><h1>Мой ритм<span style="color:var(--accent)">.</span></h1><div class="sub">Дисциплина каждый день — без перегруза.</div></div><div class="date" id="todayLabel"></div></header>
-  <div class="section-title">Расписание ГУЗ</div>
+  <header class="top"><div><div class="brand">YOUR STUDENT SPACE</div><h1>Мой ритм<span style="color:var(--accent)">.</span></h1><div class="sub">Учёба, дорога и материалы — в одном месте.</div></div><div class="date" id="todayLabel"></div></header>
+  <div class="section-title" id="scheduleSection">Расписание ГУЗ</div>
 <section class="card">
   <div class="ruz-view-switch" role="group" aria-label="Вид расписания">
     <button type="button" data-ruz-view="day">По дням</button>
@@ -189,7 +190,7 @@ button{min-height:40px;display:inline-flex;align-items:center;justify-content:ce
   <div id="schedule"><div class="empty">Выбери группу и загрузи расписание.</div></div>
 </section>
 
-  <div class="section-title">План на день</div>
+  <div class="section-title" id="daySection">Мой день</div>
   <section class="card">
     <div class="dayhead"><div><strong id="selectedDateLabel">Сегодня</strong><div class="tiny">Отмечай выполненное — данные сохраняются на этом устройстве.</div></div><input id="dayPicker" class="field" type="date" style="max-width:150px"></div>
     <div class="daily-tools">
@@ -218,7 +219,7 @@ button{min-height:40px;display:inline-flex;align-items:center;justify-content:ce
 
 
 
-<div class="section-title">Дорога и электрички</div>
+<div class="section-title" id="transportSection">Транспорт и маршруты</div>
 <section class="card">
   <div class="row">
     <strong>Мои маршруты</strong>
@@ -241,7 +242,15 @@ button{min-height:40px;display:inline-flex;align-items:center;justify-content:ce
   </p>
 </section>
 
-  <div class="section-title">Мои направления</div>
+<div class="section-title" id="materialsSection">Мои материалы</div>
+<section class="card library-card">
+<div class="library-intro"><div class="library-mark"><span>✦</span></div><div><strong>Личная учебная библиотека</strong><div class="note">Учебники, лекции, методички и презентации в одном месте.</div></div></div>
+<div class="library-upload"><label class="library-drop" for="libraryFiles"><span class="library-upload-icon">＋</span><strong>Добавить учебные файлы</strong><span class="note">PDF, DOCX, PPTX, XLSX, TXT, изображения и другие документы · до 50 МБ на файл</span></label><input id="libraryFiles" type="file" multiple class="hidden" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.rtf,.odt,.ods,.jpg,.jpeg,.png,.webp"></div>
+<div class="library-tools"><input id="librarySearch" class="field" type="search" placeholder="Поиск по названию и предмету"><select id="libraryFilter" class="field"><option value="">Все предметы</option></select></div>
+<div id="libraryList"><div class="empty">Здесь появятся твои учебные материалы.</div></div>
+<div class="library-storage-note"><span>ⓘ</span><span>В этой первой версии файлы хранятся локально в браузере на текущем устройстве. Для личного аккаунта, облака и синхронизации между телефоном и компьютером следующим этапом подключим защищённое хранилище.</span></div>
+</section>
+  <div class="section-title" id="activitySection">Активность и статистика</div>
   <div class="two">
     <section class="card">
       <div class="row"><strong>Цели и привычки</strong><span>🎯</span></div>
@@ -263,12 +272,13 @@ button{min-height:40px;display:inline-flex;align-items:center;justify-content:ce
     </section>
   </div>
 
-  <div class="section-title">Настройки и резервная копия</div>
+  <div class="section-title" id="profileSection">Профиль и настройки</div>
   <section class="card">
+    <div class="theme-panel"><div><strong>Внешний вид</strong><div class="note">Выбери оформление «Моего ритма».</div></div><div class="theme-options" role="group" aria-label="Тема оформления"><button type="button" class="theme-choice" data-theme-choice="dark"><span class="theme-swatch swatch-dark"></span>Тёмная</button><button type="button" class="theme-choice" data-theme-choice="light"><span class="theme-swatch swatch-light"></span>Светлая</button><button type="button" class="theme-choice" data-theme-choice="rhythm"><span class="theme-swatch swatch-rhythm"></span>Ритм</button></div></div>
     <div class="actions"><button class="btn secondary" id="exportBtn">Экспортировать данные</button><button class="btn secondary" id="importBtn">Импортировать</button><input type="file" id="importFile" accept="application/json" class="hidden"></div>
     <p class="note">Прогресс хранится в памяти браузера на этом iPhone. Не очищай данные сайта/браузера, иначе локальный прогресс может удалиться. Регулярно делай экспорт резервной копии. Чтобы данные были доступны на другом устройстве, понадобится синхронизация через отдельную базу или аккаунт.</p>
   </section>
-  <div class="footer">Мой ритм · личный трекер · данные остаются у тебя на устройстве</div>
+  <div class="footer">Мой ритм · пространство студента</div><nav class="bottom-nav" aria-label="Основная навигация"><a href="#daySection"><span>⌂</span><small>День</small></a><a href="#transportSection"><span>↗</span><small>Транспорт</small></a><a href="#scheduleSection"><span>▦</span><small>Расписание</small></a><a href="#materialsSection"><span>▤</span><small>Материалы</small></a><a href="#activitySection"><span>✧</span><small>Активность</small></a></nav>
 </div>
 <script>
 
@@ -761,4 +771,5 @@ document.getElementById("ruzNextPeriod").onclick=()=>shiftRuzPeriod(1);
 loadRuzGroups();
 setInterval(()=>{if(ruzWeekData[ruzSelectedDate])renderRuzWeek();},60000);
 </script>
+<script src="assets/js/rhythm-features.js"></script>
 </body></html>
