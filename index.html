@@ -32,7 +32,16 @@ button,input,select{font:inherit}button{cursor:pointer}.app{max-width:760px;marg
 .day-summary #daySummaryPercent{color:var(--green);font-variant-numeric:tabular-nums}
 .day-summary textarea{font-size:13px;line-height:1.4;min-height:58px}
 @media(max-width:390px){.compact-task{grid-template-columns:20px minmax(0,1fr) 76px 62px;gap:6px}.task-time,.task-duration{font-size:10px;padding:6px 2px}}
-.tag{font-size:11px;color:#c3baff;background:#302b53;padding:4px 7px;border-radius:7px;margin-left:auto;white-space:nowrap}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.stat{background:#10151e;border:1px solid var(--line);border-radius:14px;padding:12px}.stat strong{display:block;font-size:22px}.stat span{font-size:11px;color:var(--muted)}.schedule-item{display:grid;grid-template-columns:88px 1fr;gap:12px;padding:11px 0;border-bottom:1px solid #242b38}.schedule-item:last-child{border:0}.time{font-variant-numeric:tabular-nums;color:#b9afff;font-weight:650;font-size:13px}.subject{font-weight:600}.room{font-size:12px;color:var(--muted)}.field{width:100%;background:#0e131c;border:1px solid var(--line);border-radius:10px;color:var(--text);padding:10px 11px;outline:none}.field:focus{border-color:var(--accent)}.fields{display:grid;grid-template-columns:1fr 1fr;gap:9px}.btn{background:#8f82ed;color:#0d0c16;border:0;border-radius:11px;padding:10px 13px;font-weight:700}.btn.secondary{background:#222a39;color:var(--text);border:1px solid var(--line)}.btn.danger{background:#3a2029;color:#ffb4bd}.actions{display:flex;gap:8px;flex-wrap:wrap}.note{font-size:12px;color:var(--muted);line-height:1.5}.dayhead{display:flex;gap:8px;align-items:center;justify-content:space-between}.empty{padding:18px;text-align:center;color:var(--muted)}.barline{height:7px;background:#252d3b;border-radius:10px;overflow:hidden;margin-top:6px}.barline i{display:block;height:100%;background:var(--green);border-radius:10px}.footer{text-align:center;color:#667187;font-size:11px;padding:20px 0}.hidden{display:none!important}
+.tag{font-size:11px;color:#c3baff;background:#302b53;padding:4px 7px;border-radius:7px;margin-left:auto;white-space:nowrap}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.stat{background:#10151e;border:1px solid var(--line);border-radius:14px;padding:12px}.stat strong{display:block;font-size:22px}.stat span{font-size:11px;color:var(--muted)}.schedule-item{display:grid;grid-template-columns:88px 1fr;gap:12px;padding:11px 0;border-bottom:1px solid #242b38}.schedule-item:last-child{border:0}.time{font-variant-numeric:tabular-nums;color:#b9afff;font-weight:650;font-size:13px}.subject{font-weight:600}.room{font-size:12px;color:var(--muted)}
+.live-progress{background:#10151e;border:1px solid var(--line);border-radius:13px;padding:12px;margin:10px 0 6px}
+.live-caption,.live-foot{display:flex;justify-content:space-between;gap:8px;font-size:12px}
+.live-caption span,.live-foot{color:var(--muted)}
+.live-track,.pair-track{height:7px;background:#293142;border-radius:20px;overflow:hidden}
+.live-track{margin:9px 0 6px;height:9px}
+.live-track i,.pair-track i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:20px;transition:width .5s}
+.pair-track{margin-top:8px;height:5px}
+.pair-foot{font-size:10px;color:var(--green);margin-top:4px}
+@media(max-width:390px){.live-caption,.live-foot{font-size:11px}}.field{width:100%;background:#0e131c;border:1px solid var(--line);border-radius:10px;color:var(--text);padding:10px 11px;outline:none}.field:focus{border-color:var(--accent)}.fields{display:grid;grid-template-columns:1fr 1fr;gap:9px}.btn{background:#8f82ed;color:#0d0c16;border:0;border-radius:11px;padding:10px 13px;font-weight:700}.btn.secondary{background:#222a39;color:var(--text);border:1px solid var(--line)}.btn.danger{background:#3a2029;color:#ffb4bd}.actions{display:flex;gap:8px;flex-wrap:wrap}.note{font-size:12px;color:var(--muted);line-height:1.5}.dayhead{display:flex;gap:8px;align-items:center;justify-content:space-between}.empty{padding:18px;text-align:center;color:var(--muted)}.barline{height:7px;background:#252d3b;border-radius:10px;overflow:hidden;margin-top:6px}.barline i{display:block;height:100%;background:var(--green);border-radius:10px}.footer{text-align:center;color:#667187;font-size:11px;padding:20px 0}.hidden{display:none!important}
 @media(min-width:650px){.app{padding-top:35px}.two{display:grid;grid-template-columns:1fr 1fr;gap:13px}.two .card{margin:0}.section-title{margin-top:25px}}
   .route-card{
   background:#10151e;
@@ -58,33 +67,6 @@ button,input,select{font:inherit}button{cursor:pointer}.app{max-width:760px;marg
 <body>
 <div class="app">
   <header class="top"><div><div class="brand">PERSONAL TRACKER</div><h1>Мой ритм<span style="color:var(--accent)">.</span></h1><div class="sub">Дисциплина каждый день — без перегруза.</div></div><div class="date" id="todayLabel"></div></header>
-  <section class="card hero">
-    <div class="row"><div><div class="muted">Прогресс за сегодня</div><div class="big" id="percent">0%</div></div><div style="text-align:right"><div class="muted">Выполнено</div><strong id="doneCount">0 из 0</strong></div></div>
-    <div class="progress-wrap"><div class="progress" id="progress"></div></div>
-    <div class="tiny" id="motivation">Начни с одного небольшого действия.</div>
-  </section>
-
-  <div class="section-title">План на день</div>
-  <section class="card">
-    <div class="dayhead"><div><strong id="selectedDateLabel">Сегодня</strong><div class="tiny">Отмечай выполненное — данные сохраняются на этом устройстве.</div></div><input id="dayPicker" class="field" type="date" style="max-width:150px"></div>
-    <div class="daily-tools">
-      <div class="daily-switch" role="group" aria-label="Вид плана">
-        <button type="button" id="dailyCompactBtn" class="active">Компактно</button>
-        <button type="button" id="dailyDetailBtn">Подробно</button>
-      </div>
-      <div class="day-plan-summary" id="dayPlanSummary">Можно назначить время задачам</div>
-    </div>
-    <div id="dailyTasks"></div>
-    <div class="day-summary" id="daySummary">
-      <div class="row"><strong>Итог дня</strong><strong id="daySummaryPercent">0%</strong></div>
-      <div class="tiny" id="daySummaryStats">Выполнено 0 из 0 · осталось 0</div>
-      <div class="tiny" id="carryoverNote" style="margin-top:5px">Незавершённые личные задачи переносятся автоматически.</div>
-      <label class="tiny" for="dayReflection" style="display:block;margin-top:11px">Что получилось сегодня?</label>
-      <textarea id="dayReflection" class="field" rows="2" placeholder="Коротко запиши успехи или мысли за день..." style="margin-top:5px;resize:vertical"></textarea>
-    </div>
-    <div class="actions" style="margin-top:12px"><button class="btn secondary" id="addTaskBtn">＋ Своя задача</button><button class="btn secondary" id="resetDayBtn">Сбросить день</button></div>
-  </section>
-
   <div class="section-title">Расписание ГУЗ</div>
 <section class="card">
   <div class="fields">
@@ -115,6 +97,35 @@ button,input,select{font:inherit}button{cursor:pointer}.app{max-width:760px;marg
   <div class="tabs" id="ruzDayTabs" style="margin-top:12px"></div>
   <div id="schedule"><div class="empty">Выбери группу и загрузи расписание.</div></div>
 </section>
+
+  <div class="section-title">План на день</div>
+  <section class="card">
+    <div class="dayhead"><div><strong id="selectedDateLabel">Сегодня</strong><div class="tiny">Отмечай выполненное — данные сохраняются на этом устройстве.</div></div><input id="dayPicker" class="field" type="date" style="max-width:150px"></div>
+    <div class="daily-tools">
+      <div class="daily-switch" role="group" aria-label="Вид плана">
+        <button type="button" id="dailyCompactBtn" class="active">Компактно</button>
+        <button type="button" id="dailyDetailBtn">Подробно</button>
+      </div>
+      <div class="day-plan-summary" id="dayPlanSummary">Можно назначить время задачам</div>
+    </div>
+    <div id="dailyTasks"></div>
+    <div class="day-summary" id="daySummary">
+      <div class="row"><strong>Итог дня</strong><strong id="daySummaryPercent">0%</strong></div>
+      <div class="tiny" id="daySummaryStats">Выполнено 0 из 0 · осталось 0</div>
+      <div class="tiny" id="carryoverNote" style="margin-top:5px">Незавершённые личные задачи переносятся автоматически.</div>
+      <label class="tiny" for="dayReflection" style="display:block;margin-top:11px">Что получилось сегодня?</label>
+      <textarea id="dayReflection" class="field" rows="2" placeholder="Коротко запиши успехи или мысли за день..." style="margin-top:5px;resize:vertical"></textarea>
+    </div>
+    <div class="actions" style="margin-top:12px"><button class="btn secondary" id="addTaskBtn">＋ Своя задача</button><button class="btn secondary" id="resetDayBtn">Сбросить день</button></div>
+  </section>
+
+  <section class="card hero">
+    <div class="row"><div><div class="muted">Прогресс за сегодня</div><div class="big" id="percent">0%</div></div><div style="text-align:right"><div class="muted">Выполнено</div><strong id="doneCount">0 из 0</strong></div></div>
+    <div class="progress-wrap"><div class="progress" id="progress"></div></div>
+    <div class="tiny" id="motivation">Начни с одного небольшого действия.</div>
+  </section>
+
+
 
 <div class="section-title">Дорога и электрички</div>
 <section class="card">
@@ -212,10 +223,14 @@ function matchesRuzGroup(raw,selected,name){
   if(Array.isArray(raw.groups))return raw.groups.some(group=>groupMatches(group,selectedId,name));
   return false;
 }
+const PAIR_TIMES={1:["08:30","10:00"],2:["10:10","11:40"],3:["11:50","13:20"],4:["14:00","15:30"],5:["15:40","17:10"],6:["17:20","18:50"]};
+function pairClock(number){const pair=PAIR_TIMES[Number(number)];return pair?pair[0]+"–"+pair[1]:"Время уточняется";}
 function apiLesson(value){
   const numberStart=value.lessonNumberStart??value.lessonNumber??value.number??"";
   const numberEnd=value.lessonNumberEnd??numberStart;
-  const pair=numberStart?("Пара "+numberStart+(numberEnd&&numberEnd!==numberStart?"–"+numberEnd:"")):"Время не указано";
+  const start=PAIR_TIMES[Number(numberStart)]?.[0]||"";
+  const end=PAIR_TIMES[Number(numberEnd)]?.[1]||"";
+  const pair=numberStart?(start&&end?start+"–"+end:pairClock(numberStart)):"Время не указано";
   const subject=value.discipline??value.disciplineName??value.subjectName??value.courseName??value.name??"Занятие";
   const type=value.kindOfWork??value.lessonTypeName??value.typeName??value.lessonType??value.type??"";
   const room=value.auditorium??value.auditoriumName??value.roomName??value.room??"";
@@ -224,14 +239,23 @@ function apiLesson(value){
   const teacher=lecturers.join(", ")||value.teacherName||value.lecturerName||value.teacher||"";
   const subgroup=value.subGroupName??value.subgroupName??"";
   const stream=value.streamName??"";
-  return {
-    time:pair,
-    order:Number(numberStart)||999,
-    orderEnd:Number(numberEnd)||Number(numberStart)||999,
-    subject:String(subject),
-    details:[type,building,room?("Ауд. "+room):"",teacher,subgroup,stream?("Поток: "+stream):""].filter(Boolean).join(" · "),
-    subgroupName:String(subgroup)
-  };
+  return {time:pair,start,end,order:Number(numberStart)||999,orderEnd:Number(numberEnd)||Number(numberStart)||999,subject:String(subject),details:[type,building,room?("Ауд. "+room):"",teacher,subgroup,stream?("Поток: "+stream):""].filter(Boolean).join(" · "),subgroupName:String(subgroup)};
+}
+function clockMinutes(value){if(!value)return null;const parts=value.split(":").map(Number);return parts[0]*60+parts[1];}
+function renderRuzLiveProgress(lessons){
+  const host=document.getElementById("ruzLiveProgress");if(!host)return;
+  const now=new Date(),today=localDate();
+  if(ruzSelectedDate!==today){host.innerHTML='<div class="tiny muted">Шкала времени появится для текущего дня.</div>';return;}
+  const minute=now.getHours()*60+now.getMinutes(),timed=lessons.filter(x=>x.start&&x.end).sort((a,b)=>a.start.localeCompare(b.start));
+  if(!timed.length){host.innerHTML='<div class="tiny muted">Для этих пар пока нет точного времени.</div>';return;}
+  const current=timed.find(x=>minute>=clockMinutes(x.start)&&minute<clockMinutes(x.end));
+  if(current){
+    const start=clockMinutes(current.start),end=clockMinutes(current.end),elapsed=minute-start,remaining=end-minute,percent=Math.max(0,Math.min(100,Math.round(elapsed/(end-start)*100)));
+    host.innerHTML='<div class="live-caption"><strong>Сейчас идёт: '+current.order+' пара</strong><span>'+current.start+'–'+current.end+'</span></div><div class="live-track"><i style="width:'+percent+'%"></i></div><div class="live-foot"><span>Прошло '+elapsed+' мин</span><span>Осталось '+remaining+' мин · '+percent+'%</span></div>';return;
+  }
+  const next=timed.find(x=>minute<clockMinutes(x.start));
+  if(next){const wait=clockMinutes(next.start)-minute;host.innerHTML='<div class="live-caption"><strong>Следующая: '+next.order+' пара</strong><span>'+next.start+'–'+next.end+'</span></div><div class="live-track"><i style="width:0%"></i></div><div class="live-foot"><span>До начала '+wait+' мин</span><span>Пока свободное время</span></div>';}
+  else{const last=timed[timed.length-1];host.innerHTML='<div class="live-caption"><strong>Занятия на сегодня закончились</strong><span>Последняя пара: '+last.end+'</span></div><div class="live-track"><i style="width:100%"></i></div><div class="live-foot"><span>Все пары завершены</span><span>Хорошего отдыха!</span></div>';}
 }
 async function readRuzJson(path){
   const response=await fetch(RUZ_DATA_BASE+path+"?v="+Date.now(),{cache:"no-store"});
@@ -303,46 +327,35 @@ async function loadRuzWeek(){
   }
 }
 function renderRuzWeek(){
-  const tabs=document.getElementById("ruzDayTabs");
-  const host=document.getElementById("schedule");
-  const monday=mondayOf(document.getElementById("ruzDate").value||localDate());
-  const dates=Array.from({length:7},(_,i)=>addDays(monday,i));
+  const tabs=document.getElementById("ruzDayTabs"),host=document.getElementById("schedule");
+  const monday=mondayOf(document.getElementById("ruzDate").value||localDate()),dates=Array.from({length:7},(_,i)=>addDays(monday,i));
   if(!dates.includes(ruzSelectedDate))ruzSelectedDate=dates.includes(localDate())?localDate():dates[0];
   tabs.innerHTML="";
-  dates.forEach((date,index)=>{
-    const button=document.createElement("button");
-    button.className="pill tab"+(date===ruzSelectedDate?" active":"");
-    button.textContent=["Пн","Вт","Ср","Чт","Пт","Сб","Вс"][index]+" · "+date.slice(8,10);
-    button.onclick=()=>{ruzSelectedDate=date;renderRuzWeek();};
-    tabs.appendChild(button);
-  });
-  const lessons=ruzWeekData[ruzSelectedDate]||[];
-  const title=new Date(ruzSelectedDate+"T12:00:00").toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"});
+  dates.forEach((date,index)=>{const button=document.createElement("button");button.className="pill tab"+(date===ruzSelectedDate?" active":"");button.textContent=["Пн","Вт","Ср","Чт","Пт","Сб","Вс"][index]+" · "+date.slice(8,10);button.onclick=()=>{ruzSelectedDate=date;renderRuzWeek();};tabs.appendChild(button);});
+  const lessons=ruzWeekData[ruzSelectedDate]||[],title=new Date(ruzSelectedDate+"T12:00:00").toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"});
   host.innerHTML="";
-  const header=document.createElement("div");
-  header.className="row";
-  header.style.margin="12px 0 4px";
-  const label=document.createElement("strong");label.textContent=title;
-  const count=document.createElement("span");count.className="tiny";count.textContent=lessons.length+" пар";
-  header.append(label,count);host.appendChild(header);
+  const header=document.createElement("div");header.className="row";header.style.margin="12px 0 4px";
+  const label=document.createElement("strong");label.textContent=title;const count=document.createElement("span");count.className="tiny";count.textContent=lessons.length+" пар";header.append(label,count);host.appendChild(header);
+  const live=document.createElement("div");live.id="ruzLiveProgress";live.className="live-progress";host.appendChild(live);renderRuzLiveProgress(lessons);
   if(!lessons.length){const empty=document.createElement("div");empty.className="empty";empty.textContent="Занятий не найдено.";host.appendChild(empty);return;}
   if(ruzShowGaps){
-    const used=new Set();
-    lessons.forEach(x=>{if(x.order<999){for(let n=x.order;n<=Math.max(x.order,x.orderEnd);n++)used.add(n);}});
-    const max=Math.max(...used);
-    const gaps=[];
-    for(let n=1;n<max;n++)if(!used.has(n))gaps.push(n);
-    const gap=document.createElement("div");gap.className="note";gap.style.margin="8px 0";
-    gap.textContent=gaps.length?"Свободные окна: между парами "+gaps.join(", ")+".":"Свободных окон между занятиями не найдено.";
-    host.appendChild(gap);
+    const used=new Set();lessons.forEach(x=>{if(x.order<999){for(let n=x.order;n<=Math.max(x.order,x.orderEnd);n++)used.add(n);}});
+    const max=used.size?Math.max(...used):0,gaps=[];for(let n=1;n<max;n++)if(!used.has(n))gaps.push(n);
+    const gap=document.createElement("div");gap.className="note";gap.style.margin="8px 0";gap.textContent=gaps.length?"Свободные окна: между парами "+gaps.join(", ")+".":"Свободных окон между занятиями не найдено.";host.appendChild(gap);
   }
   lessons.forEach(lesson=>{
     const row=document.createElement("div");row.className="schedule-item";
     const time=document.createElement("div");time.className="time";time.textContent=lesson.time;
-    const body=document.createElement("div");
-    const subject=document.createElement("div");subject.className="subject";subject.textContent=lesson.subject;
-    const details=document.createElement("div");details.className="room";details.textContent=lesson.details||"Дополнительные сведения отсутствуют";
-    body.append(subject,details);row.append(time,body);host.appendChild(row);
+    const body=document.createElement("div"),subject=document.createElement("div");subject.className="subject";subject.textContent=lesson.subject;
+    const details=document.createElement("div");details.className="room";details.textContent=lesson.details||"Дополнительные сведения отсутствуют";body.append(subject,details);
+    if(lesson.start&&lesson.end){
+      const start=clockMinutes(lesson.start),end=clockMinutes(lesson.end),now=new Date(),minute=now.getHours()*60+now.getMinutes();
+      const progress=ruzSelectedDate!==localDate()?0:minute>=end?100:minute<=start?0:Math.round((minute-start)/(end-start)*100);
+      const track=document.createElement("div");track.className="pair-track";const fill=document.createElement("i");fill.style.width=progress+"%";track.appendChild(fill);
+      const foot=document.createElement("div");foot.className="pair-foot";foot.textContent=progress===100?"Пара завершена":progress>0?"Прошло "+Math.max(0,minute-start)+" из "+(end-start)+" мин":"";
+      body.append(track);if(foot.textContent)body.append(foot);
+    }
+    row.append(time,body);host.appendChild(row);
   });
 }
 const SCHEDULE = {
@@ -599,5 +612,6 @@ document.getElementById("ruzTodayBtn").onclick=()=>{document.getElementById("ruz
 document.getElementById("ruzGapsBtn").onclick=()=>{ruzShowGaps=!ruzShowGaps;document.getElementById("ruzGapsBtn").textContent=ruzShowGaps?"Скрыть окна":"Свободные окна";renderRuzWeek();};
 document.getElementById("ruzDate").addEventListener("change",()=>{ruzSelectedDate="";});
 loadRuzGroups();
+setInterval(()=>{if(ruzWeekData[ruzSelectedDate])renderRuzWeek();},60000);
 </script>
 </body></html>
