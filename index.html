@@ -256,6 +256,20 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
 .site-reload:active{transform:rotate(35deg)}
 @media(max-width:430px){.top-right{gap:7px}.site-reload{width:38px;height:38px;min-height:38px}}
 
+
+/* Поиск станций и расписание электричек */
+.station-wrap{position:relative}
+.station-suggestions{position:absolute;z-index:30;top:100%;left:0;right:0;background:#171e2b;border:1px solid #514a7e;border-radius:10px;max-height:220px;overflow:auto;box-shadow:0 12px 30px #0008}
+.station-option{display:block;width:100%;text-align:left;justify-content:flex-start;border:0;border-radius:0;background:transparent;color:var(--text);padding:10px 12px;min-height:42px;border-bottom:1px solid var(--line)}
+.station-option:last-child{border-bottom:0}
+.station-option small{display:block;color:var(--muted);font-size:11px}
+.train-results{margin-top:12px}
+.train-item{padding:12px 0;border-bottom:1px solid var(--line)}
+.train-item:last-child{border-bottom:0}
+.train-times{display:flex;align-items:center;gap:10px;font-weight:750;font-size:17px}
+.train-meta{font-size:12px;color:var(--muted);margin-top:4px}
+.train-status{font-size:12px;color:var(--muted);margin-top:10px}
+
 </style>
 </head>
 <body>
@@ -351,7 +365,7 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
   </button>
 
   <p class="note" style="margin-top:13px">
-    Автоматическое расписание подключим после настройки API.
+    Введи название станции, выбери вариант из подсказок и нажми «Найти электрички».
   </p>
 </section>
 
@@ -742,57 +756,167 @@ function renderDaySummary(){
  if(reflection.value!==(d.reflection||""))reflection.value=d.reflection||"";
 }
 function renderProgress(){let d=dayData(),all=BASE_TASKS.length+d.custom.length,done=Object.values(d.checks).filter(Boolean).length,p=all?Math.round(done/all*100):0;document.getElementById("percent").textContent=p+"%";document.getElementById("doneCount").textContent=`${done} из ${all}`;document.getElementById("progress").style.width=p+"%";document.getElementById("motivation").textContent=p===100?"Отлично. Сегодня ты выполнил весь план.":p>=50?"Хороший темп. Дожми оставшиеся задачи.":p>0?"Каждая отметка — маленькая победа. Продолжай.":"Не нужно делать всё сразу. Начни с одной задачи."}
+const TRAINS_API="https://moy-ritm-trains.maks-zavalnitskiy.workers.dev";
+
 function ensureRoutes(){
   if(!Array.isArray(data.settings.routes)){
     data.settings.routes=[
-      {
-        id:"route_1",
-        from:"Львовская",
-        to:"Курская",
-        date:localDate()
-      },
-      {
-        id:"route_2",
-        from:"Курская",
-        to:"Львовская",
-        date:localDate()
-      }
+      {id:"route_1",from:"Львовская",to:"Курская",date:localDate()},
+      {id:"route_2",from:"Курская",to:"Львовская",date:localDate()}
     ];
     save();
   }
 }
 
+function createStationField(route,side,labelText){
+  const wrap=document.createElement("div");
+  wrap.className="station-wrap";
+  const label=document.createElement("label");
+  label.textContent=labelText;
+  const input=document.createElement("input");
+  input.className="field";
+  input.autocomplete="off";
+  input.placeholder="Начни вводить название станции";
+  input.value=route[side]||"";
+  const codeKey=side+"Code";
+  const list=document.createElement("div");
+  list.className="station-suggestions hidden";
+  wrap.append(label,input,list);
+
+  let requestNumber=0;
+  input.addEventListener("input",()=>{
+    route[side]=input.value.trim();
+    route[codeKey]="";
+    route.results=null;
+    save();
+    const current=++requestNumber;
+    list.innerHTML="";
+    if(input.value.trim().length<2){list.classList.add("hidden");return;}
+    const query=input.value.trim();
+    fetch(TRAINS_API+"/stations?q="+encodeURIComponent(query)+"&limit=12")
+      .then(response=>{if(!response.ok)throw new Error("Ошибка поиска станций");return response.json()})
+      .then(payload=>{
+        if(current!==requestNumber)return;
+        list.innerHTML="";
+        (payload.stations||[]).forEach(station=>{
+          const option=document.createElement("button");
+          option.type="button";
+          option.className="station-option";
+          option.textContent=station.title;
+          const small=document.createElement("small");
+          small.textContent=[station.settlement,station.region,station.country].filter(Boolean).join(" · ");
+          option.appendChild(small);
+          option.addEventListener("click",()=>{
+            input.value=station.title;
+            route[side]=station.title;
+            route[codeKey]=station.code;
+            route.results=null;
+            list.classList.add("hidden");
+            save();
+            const heading=wrap.closest(".route-card").querySelector(".route-heading");
+            heading.textContent=route.from+" → "+route.to;
+          });
+          list.appendChild(option);
+        });
+        if(!list.children.length){
+          const empty=document.createElement("div");
+          empty.className="train-status";
+          empty.textContent="Станции не найдены";
+          list.appendChild(empty);
+        }
+        list.classList.remove("hidden");
+      })
+      .catch(error=>{
+        if(current!==requestNumber)return;
+        list.innerHTML="";
+        const message=document.createElement("div");
+        message.className="train-status";
+        message.textContent=error.message;
+        list.appendChild(message);
+        list.classList.remove("hidden");
+      });
+  });
+  input.addEventListener("blur",()=>setTimeout(()=>list.classList.add("hidden"),180));
+  input.addEventListener("focus",()=>{if(list.children.length)list.classList.remove("hidden")});
+  return wrap;
+}
+
+function formatTrainDate(value){
+  if(!value)return "";
+  const d=new Date(value);
+  return Number.isNaN(d.getTime())?String(value):d.toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"});
+}
+
+async function searchTrains(route,resultHost,button){
+  if(!route.fromCode||!route.toCode){
+    resultHost.textContent="Выбери станции отправления и прибытия из выпадающих подсказок.";
+    return;
+  }
+  if(!route.date){
+    resultHost.textContent="Выбери дату поездки.";
+    return;
+  }
+  button.disabled=true;
+  button.textContent="Ищем…";
+  resultHost.innerHTML='<div class="train-status">Получаем расписание…</div>';
+  try{
+    const params=new URLSearchParams({from:route.fromCode,to:route.toCode,date:route.date});
+    const response=await fetch(TRAINS_API+"/?"+params.toString());
+    const payload=await response.json();
+    if(!response.ok)throw new Error(payload.error||"Не удалось получить расписание");
+    const segments=payload.segments||[];
+    resultHost.innerHTML="";
+    if(!segments.length){
+      resultHost.textContent="На выбранную дату электрички не найдены.";
+      route.results=[];
+      save();
+      return;
+    }
+    route.results=segments.map(segment=>({
+      departure:segment.departure,
+      arrival:segment.arrival,
+      duration:segment.duration,
+      title:segment.thread?.title||segment.thread?.short_title||"Электричка"
+    }));
+    segments.forEach(segment=>{
+      const item=document.createElement("div");
+      item.className="train-item";
+      const times=document.createElement("div");
+      times.className="train-times";
+      times.textContent=formatTrainDate(segment.departure)+" → "+formatTrainDate(segment.arrival);
+      const title=document.createElement("div");
+      title.textContent=segment.thread?.title||segment.thread?.short_title||"Электричка";
+      const meta=document.createElement("div");
+      meta.className="train-meta";
+      const duration=segment.duration?Math.round(segment.duration/60)+" мин":"";
+      meta.textContent=[duration,segment.stops?segment.stops+" остановок":""].filter(Boolean).join(" · ");
+      item.append(times,title,meta);
+      resultHost.appendChild(item);
+    });
+    save();
+  }catch(error){
+    resultHost.textContent="Ошибка: "+error.message;
+  }finally{
+    button.disabled=false;
+    button.textContent="Найти электрички";
+  }
+}
+
 function renderRoutes(){
   ensureRoutes();
-
   const host=document.getElementById("routesList");
   host.innerHTML="";
-
   data.settings.routes.forEach(route=>{
     const card=document.createElement("div");
     card.className="route-card";
-
     const title=document.createElement("strong");
-    title.textContent=route.from+" → "+route.to;
+    title.className="route-heading";
+    title.textContent=(route.from||"Откуда")+" → "+(route.to||"Куда");
     card.appendChild(title);
 
-    const fromLabel=document.createElement("label");
-    fromLabel.textContent="Станция отправления";
-    const from=document.createElement("input");
-    from.className="field";
-    from.value=route.from;
-    from.placeholder="Например, Львовская";
-    fromLabel.appendChild(from);
-    card.appendChild(fromLabel);
-
-    const toLabel=document.createElement("label");
-    toLabel.textContent="Станция прибытия";
-    const to=document.createElement("input");
-    to.className="field";
-    to.value=route.to;
-    to.placeholder="Например, Курская";
-    toLabel.appendChild(to);
-    card.appendChild(toLabel);
+    const fromField=createStationField(route,"from","Станция отправления");
+    const toField=createStationField(route,"to","Станция прибытия");
+    card.append(fromField,toField);
 
     const dateLabel=document.createElement("label");
     dateLabel.textContent="Дата поездки";
@@ -800,55 +924,57 @@ function renderRoutes(){
     date.type="date";
     date.className="field";
     date.value=route.date||localDate();
+    date.addEventListener("change",()=>{
+      route.date=date.value;
+      route.results=null;
+      save();
+    });
     dateLabel.appendChild(date);
     card.appendChild(dateLabel);
 
     const actions=document.createElement("div");
     actions.className="actions";
+    actions.style.marginTop="12px";
+
+    const search=document.createElement("button");
+    search.type="button";
+    search.className="btn";
+    search.textContent="Найти электрички";
+    search.addEventListener("click",()=>searchTrains(route,resultHost,search));
 
     const remove=document.createElement("button");
+    remove.type="button";
     remove.className="btn danger";
     remove.textContent="Удалить маршрут";
-    remove.type="button";
-
-    remove.onclick=()=>{
+    remove.addEventListener("click",()=>{
       if(!confirm("Удалить этот маршрут?"))return;
-      data.settings.routes=data.settings.routes.filter(
-        item=>item.id!==route.id
-      );
+      data.settings.routes=data.settings.routes.filter(item=>item.id!==route.id);
       save();
       renderRoutes();
-    };
-
-    actions.appendChild(remove);
+    });
+    actions.append(search,remove);
     card.appendChild(actions);
 
-    const update=()=>{
-      route.from=from.value.trim();
-      route.to=to.value.trim();
-      route.date=date.value;
-      save();
-      title.textContent=route.from+" → "+route.to;
-    };
-
-    from.addEventListener("change",update);
-    to.addEventListener("change",update);
-    date.addEventListener("change",update);
-
+    const resultHost=document.createElement("div");
+    resultHost.className="train-results";
+    if(Array.isArray(route.results)&&route.results.length){
+      resultHost.textContent="Нажми «Найти электрички», чтобы обновить расписание.";
+    }
+    card.appendChild(resultHost);
     host.appendChild(card);
   });
 }
 
 document.getElementById("addRouteBtn").onclick=()=>{
   ensureRoutes();
-
   data.settings.routes.push({
     id:"route_"+Date.now(),
     from:"",
     to:"",
+    fromCode:"",
+    toCode:"",
     date:localDate()
   });
-
   save();
   renderRoutes();
 };
