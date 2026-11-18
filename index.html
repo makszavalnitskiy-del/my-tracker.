@@ -1486,19 +1486,29 @@ function trainBindStation(inputId,side){
           list.classList.add("open");
           return;
         }
-        const response=await fetch(TRAINS_API+"/stations?q="+encodeURIComponent(query)+"&limit=20",{signal:controller.signal});
-        if(!response.ok)throw new Error("Не удалось загрузить станции");
-        const payload=await response.json();
-        if(!payload||!Array.isArray(payload.stations))throw new Error("Некорректный ответ сервера");
+        // SQLite LIKE может учитывать регистр кириллицы: запрашиваем основные варианты написания.
+        const searchTerms=[...new Set([
+          query,
+          query.toLocaleLowerCase("ru"),
+          query.toLocaleUpperCase("ru"),
+          query.charAt(0).toLocaleUpperCase("ru")+query.slice(1).toLocaleLowerCase("ru")
+        ])];
+        const payloads=await Promise.all(searchTerms.map(async term=>{
+          const response=await fetch(TRAINS_API+"/stations?q="+encodeURIComponent(term)+"&limit=20",{signal:controller.signal});
+          if(!response.ok)throw new Error("Не удалось загрузить станции");
+          const payload=await response.json();
+          if(!payload||!Array.isArray(payload.stations))throw new Error("Некорректный ответ сервера");
+          return payload.stations;
+        }));
         if(thisRequest!==requestId)return;
         const allowedCountries=new Set(["россия","российская федерация","russia","ru"]);
         const uniqueStations=new Map();
-        payload.stations.forEach(station=>{
+        payloads.flat().forEach(station=>{
           if(!station||typeof station.title!=="string"||!station.title.trim())return;
           const country=String(station.country||"").trim().toLocaleLowerCase("ru");
           if(country&&!allowedCountries.has(country))return;
           const title=normalizeStationText(station.title);
-          // Совпадение проверяется только по названию станции, не по региону/населённому пункту.
+          // Поиск и фильтрация — только по названию станции.
           if(!title.includes(needle))return;
           const key=String(station.code||"")+"|"+title;
           if(!uniqueStations.has(key))uniqueStations.set(key,station);
