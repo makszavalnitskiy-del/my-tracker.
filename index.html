@@ -209,27 +209,15 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
 }
 
 
-/* iPhone: дата не должна расширять двухколоночную сетку */
-@media (max-width:430px){
-  .fields{
-    display:grid !important;
-    grid-template-columns:minmax(0,1fr) !important;
-    width:100% !important;
-    min-width:0 !important;
-  }
-  .fields>div{
-    grid-column:1 / -1 !important;
-    width:100% !important;
-    min-width:0 !important;
-    max-width:100% !important;
-  }
+/* Уменьшаем только видимую рамку поля даты на телефоне */
+@media(max-width:430px){
+  .fields{grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important}
+  .fields>div{min-width:0 !important}
   #ruzDate{
-    display:block !important;
-    width:100% !important;
+    width:calc(100% - 14px) !important;
     min-width:0 !important;
-    max-width:100% !important;
-    -webkit-appearance:none;
-    appearance:none;
+    max-width:calc(100% - 14px) !important;
+    justify-self:start;
   }
 }
 
