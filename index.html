@@ -245,11 +245,22 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
   padding:14px 16px;
 }
 
+
+.top-right{display:flex;align-items:center;gap:10px;flex:none}
+.site-reload{
+  width:40px;height:40px;min-height:40px;padding:0;
+  border:1px solid var(--line);border-radius:12px;
+  background:#1a2030;color:var(--text);
+  font-size:25px;line-height:1;cursor:pointer;
+}
+.site-reload:active{transform:rotate(35deg)}
+@media(max-width:430px){.top-right{gap:7px}.site-reload{width:38px;height:38px;min-height:38px}}
+
 </style>
 </head>
 <body>
 <div class="app">
-  <header class="top"><div><div class="brand">PERSONAL TRACKER</div><h1>Мой ритм<span style="color:var(--accent)">.</span></h1><div class="sub">Дисциплина каждый день — без перегруза.</div></div><div class="date" id="todayLabel"></div></header>
+  <header class="top"><div><div class="brand">PERSONAL TRACKER</div><h1>Мой ритм<span style="color:var(--accent)">.</span></h1><div class="sub">Дисциплина каждый день — без перегруза.</div></div><div class="top-right"><div class="date" id="todayLabel"></div><button class="site-reload" id="siteReloadBtn" type="button" aria-label="Перезагрузить сайт" title="Перезагрузить сайт">↻</button></div></header>
   <div class="section-title">Расписание ГУЗ</div>
 <section class="card">
   <div class="ruz-view-switch" role="group" aria-label="Вид расписания">
@@ -860,6 +871,7 @@ document.getElementById("exportBtn").onclick=()=>{let blob=new Blob([JSON.string
 document.getElementById("importBtn").onclick=()=>document.getElementById("importFile").click();
 document.getElementById("importFile").onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let obj=JSON.parse(await f.text());if(!obj.days||!obj.settings)throw Error();data=obj;save();renderTasks();renderRoutes();alert("Резервная копия загружена")}catch(err){alert("Не удалось прочитать файл резервной копии")}};
 document.getElementById("todayLabel").textContent=new Date().toLocaleDateString("ru-RU",{day:"numeric",month:"short"});
+document.getElementById("siteReloadBtn").addEventListener("click",()=>window.location.reload());
 renderTasks();renderStats();renderRoutes();
 document.getElementById("ruzGroup").value=data.settings.ruzGroup||"Г.ПГ.26.С1";
 document.getElementById("ruzSubgroup").value=data.settings.ruzSubgroup||"";
