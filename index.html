@@ -401,10 +401,10 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
   .tm-live{max-width:94px;white-space:normal;line-height:1.15;font-size:10px}
   .tm-icon-btn{width:39px;height:39px;min-height:39px}
   .tm-intro{padding:18px 2px 13px}
-  .tm-route-fields{grid-template-columns:minmax(0,1fr) 40px;gap:8px}
-  .tm-station-field:first-child{grid-column:1}
-  .tm-swap{grid-column:2;grid-row:1;align-self:end;width:40px;margin-bottom:4px}
-  .tm-station-field:last-child{grid-column:1/-1}
+  .tm-route-fields{grid-template-columns:minmax(0,1fr);gap:7px}
+  .tm-station-field:first-child{grid-column:1;grid-row:1}
+  .tm-swap{grid-column:1;grid-row:2;justify-self:center;align-self:center;width:44px;margin:0}
+  .tm-station-field:last-child{grid-column:1;grid-row:3}
   .tm-filter-row{align-items:flex-start;flex-direction:column;gap:7px}
   .tm-filter-group{width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
   .tm-filter{padding:0 5px;font-size:10px}
@@ -1036,8 +1036,23 @@ function trainSetStatus(state,label){
 }
 function trainFormatTime(value){
   if(!value)return "—";
+  const text=String(value);
+  const marker=text.indexOf("T");
+  const clock=marker>=0?text.slice(marker+1,marker+6):"";
+  if(clock.length===5&&clock[2]===":")return clock;
   const d=new Date(value);
   return Number.isNaN(d.getTime())?String(value):d.toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"});
+}
+function trainNowTimeFor(segment){
+  const value=String(segment&&segment.departure||"");
+  const offset=value.slice(-6);
+  if((offset[0]!=="+"&&offset[0]!=="-")||offset[3]!==":")return new Date().toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"});
+  const hours=Number(offset.slice(1,3));
+  const mins=Number(offset.slice(4,6));
+  if(!Number.isFinite(hours)||!Number.isFinite(mins))return new Date().toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"});
+  const total=(hours*60+mins)*(offset[0]==="-"?-1:1);
+  const local=new Date(Date.now()+total*60000);
+  return String(local.getUTCHours()).padStart(2,"0")+":"+String(local.getUTCMinutes()).padStart(2,"0");
 }
 function trainFormatDuration(seconds){
   if(typeof seconds!=="number"||!Number.isFinite(seconds)||seconds<0)return "";
@@ -1048,6 +1063,8 @@ function trainFormatDuration(seconds){
 }
 function trainSameDay(value,date){
   if(!value)return false;
+  const source=String(value);
+  if(source.length>=10&&source[4]==="-"&&source[7]==="-")return source.slice(0,10)===date;
   const d=new Date(value);
   return !Number.isNaN(d.getTime())&&localDate(d)===date;
 }
@@ -1134,7 +1151,7 @@ function trainRenderSegments(){
       divider.className="tm-now-divider";
       const line=document.createElement("span");
       divider.appendChild(line);
-      trainAppendText(divider,"strong","", "Сейчас · "+new Date().toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"}));
+      trainAppendText(divider,"strong","", "Сейчас · "+trainNowTimeFor(segment));
       divider.appendChild(document.createElement("span"));
       host.appendChild(divider);
       nowDividerAdded=true;
