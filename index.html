@@ -208,6 +208,31 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
   .fields input[type="date"]{font-size:16px;padding-left:8px;padding-right:5px}
 }
 
+
+/* iPhone: дата не должна расширять двухколоночную сетку */
+@media (max-width:430px){
+  .fields{
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) !important;
+    width:100% !important;
+    min-width:0 !important;
+  }
+  .fields>div{
+    grid-column:1 / -1 !important;
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100% !important;
+  }
+  #ruzDate{
+    display:block !important;
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100% !important;
+    -webkit-appearance:none;
+    appearance:none;
+  }
+}
+
 </style>
 </head>
 <body>
