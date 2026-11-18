@@ -1087,6 +1087,18 @@ function trainSetEmpty(title,message,icon){
   trainAppendText(empty,"span","",message);
   host.appendChild(empty);
 }
+function trainResetResults(message){
+  if(trainSearchController)trainSearchController.abort();
+  trainSegments=[];
+  trainCurrentFilter="all";
+  const summary=document.getElementById("trainRouteSummary");
+  summary.classList.add("hidden");
+  document.getElementById("trainUpdated").textContent="Данные ещё не загружены";
+  document.getElementById("trainSearchMessage").textContent=message||"Маршрут изменён. Запустите поиск, чтобы получить актуальное расписание.";
+  trainSetStatus("","Ожидает поиска");
+  trainUpdateFilterButtons();
+  trainSetEmpty("Расписание ещё не загружено",message||"После изменения маршрута выполните новый поиск.","↗");
+}
 function trainRenderSegments(){
   const host=document.getElementById("trainResults");
   const filtered=trainSegments.filter(segment=>{
@@ -1299,6 +1311,7 @@ function trainBindStation(inputId,side){
     trainSearchState[side]=station.title||"";
     trainSearchState[codeKey]=station.code||"";
     trainSearchState[metaKey]=[station.settlement,station.region,station.country].filter(Boolean).join(" · ");
+    trainResetResults("Станция выбрана. Запустите поиск, чтобы загрузить новое расписание.");
     list.innerHTML="";
     close();
     trainPersistSearch();
@@ -1334,6 +1347,7 @@ function trainBindStation(inputId,side){
     trainSearchState[side]=input.value.trim();
     trainSearchState[codeKey]="";
     trainSearchState[metaKey]="";
+    trainResetResults("Маршрут изменён. Выберите станцию из подсказок и выполните поиск.");
     trainPersistSearch();
     trainUpdateFavoriteButton();
     if(debounce)clearTimeout(debounce);
@@ -1471,16 +1485,19 @@ function initTrainModule(){
     trainSearchState.to=from.name;
     trainSearchState.toCode=from.code;
     trainSearchState.toMeta=from.meta;
+    trainResetResults("Станции поменялись местами. Найдите электрички для нового направления.");
     trainSyncInputs();
     trainPersistSearch();
   });
   document.getElementById("trainDate").addEventListener("change",event=>{
     trainSearchState.date=event.target.value;
+    trainResetResults("Дата поездки изменена. Выполните поиск для получения расписания на эту дату.");
     trainSyncInputs();
     trainPersistSearch();
   });
   document.querySelectorAll("[data-train-date]").forEach(button=>button.addEventListener("click",()=>{
     trainSearchState.date=button.dataset.trainDate==="today"?trainLocalDate(0):trainLocalDate(1);
+    trainResetResults("Дата поездки изменена. Выполните поиск для получения расписания на эту дату.");
     trainSyncInputs();
     trainPersistSearch();
   }));
