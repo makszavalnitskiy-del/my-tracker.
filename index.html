@@ -142,6 +142,60 @@ button{min-height:40px;display:inline-flex;align-items:center;justify-content:ce
 .ruz-week-card .schedule-item:last-child{border-bottom:0}
 @media(max-width:390px){.ruz-day-strip{gap:1px}.ruz-day-strip button{min-height:54px}.ruz-month-grid{gap:3px}.ruz-month-grid button{min-height:45px;border-radius:10px}}
 
+
+/* Мобильная адаптация: расписание и общие блоки не должны выходить за экран */
+*,*::before,*::after{box-sizing:border-box}
+html,body{width:100%;max-width:100%;overflow-x:hidden}
+.app{width:100%;max-width:760px;min-width:0}
+.card,.top,.section-title,#schedule,.ruz-week-card{min-width:0;max-width:100%}
+#schedule{width:100%;overflow-wrap:anywhere}
+.schedule-item{grid-template-columns:minmax(76px,96px) minmax(0,1fr);min-width:0}
+.schedule-item .time,.schedule-item .subject,.schedule-item .room{min-width:0;overflow-wrap:anywhere;white-space:normal}
+.ruz-view-switch,.ruz-period-nav,.ruz-day-strip,.ruz-month-grid{width:100%;min-width:0}
+.ruz-period-nav strong{min-width:0;flex:1;overflow-wrap:anywhere;line-height:1.25}
+.ruz-month-grid{grid-template-columns:repeat(7,minmax(0,1fr))}
+.ruz-month-grid .weekday,.ruz-month-grid button{min-width:0;padding-left:0;padding-right:0}
+.fields>div,.actions>*{min-width:0;max-width:100%}
+@media(max-width:430px){
+  .app{padding-left:10px;padding-right:10px}
+  .card{padding:12px}
+  .top{gap:10px;align-items:flex-start;flex-wrap:wrap}
+  .top>div{min-width:0}
+  .ruz-view-switch{gap:3px;padding:3px}
+  .ruz-view-switch button{padding:8px 2px;font-size:12px;min-width:0}
+  .ruz-period-nav{gap:6px;padding:6px}
+  .ruz-period-nav button{flex:0 0 36px;width:36px}
+  .ruz-period-nav strong{font-size:12px}
+  .ruz-day-strip{gap:2px}
+  .ruz-day-strip button{padding:4px 0;min-width:0}
+  .ruz-day-strip button .ruz-weekday{font-size:10px}
+  .ruz-day-strip button .ruz-daynum{font-size:14px}
+  .ruz-month-grid{gap:3px}
+  .ruz-month-grid .weekday{font-size:10px}
+  .ruz-month-grid button{min-height:42px;border-radius:9px;font-size:12px}
+  .ruz-week-card{padding:10px}
+  .ruz-week-card-head{gap:5px;align-items:flex-start}
+  .ruz-week-card-head button{min-width:0;flex:1;font-size:13px;overflow-wrap:anywhere}
+  .ruz-week-card-head .ruz-count{padding:4px 6px;font-size:10px}
+  .schedule-item{grid-template-columns:minmax(68px,78px) minmax(0,1fr);gap:7px;padding:10px 0}
+  .schedule-item .time{font-size:11px;white-space:normal;overflow-wrap:anywhere}
+  .schedule-item .subject{font-size:13px;line-height:1.3}
+  .schedule-item .room{font-size:11px;line-height:1.35}
+  .fields{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .actions{display:flex;flex-wrap:wrap}
+  .actions>.btn{flex:1 1 42%;min-width:0;font-size:12px;padding:8px 6px}
+}
+@media(max-width:350px){
+  .app{padding-left:8px;padding-right:8px}
+  .card{padding:10px}
+  .ruz-view-switch button{font-size:11px}
+  .schedule-item{grid-template-columns:minmax(62px,70px) minmax(0,1fr);gap:6px}
+  .ruz-month-grid{gap:2px}
+  .ruz-month-grid button{min-height:38px}
+  .fields{grid-template-columns:minmax(0,1fr)}
+  .fields>div[style*="grid-column"]{grid-column:1/-1}
+}
+
 </style>
 </head>
 <body>
