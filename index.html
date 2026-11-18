@@ -1487,6 +1487,15 @@ function trainBindStation(inputId,side){
             addTerm("Курский вокзал");
           }
         }
+        if(/львов/i.test(normalized)){
+          addTerm("Львовский");
+          addTerm("Львовская");
+          addTerm("Подольск");
+        }
+        if(/подольск/i.test(normalized)){
+          addTerm("Подольск");
+          addTerm("Подольская");
+        }
         const stem=normalized.replace(/(ский|ская|ское|ские|ской|цкий|цкая)$/iu,"");
         if(stem!==normalized)addTerm(stem);
         const payloads=await Promise.all(searchTerms.slice(0,5).map(async term=>{
@@ -1495,7 +1504,7 @@ function trainBindStation(inputId,side){
           return response.json();
         }));
         if(thisRequest!==requestId)return;
-        const allowedCountries=new Set(["россия","российская федерация","russia","ru","украина","ukraine","ua"]);
+        const allowedCountries=new Set(["россия","российская федерация","russia","ru"]);
         const isAllowedStation=station=>{
           const country=String(station.country||"").trim().toLocaleLowerCase("ru");
           return !country||allowedCountries.has(country);
