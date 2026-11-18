@@ -442,76 +442,6 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
 <body>
 <div class="app">
   <header class="top"><div><div class="brand">PERSONAL TRACKER</div><h1>Мой ритм<span style="color:var(--accent)">.</span></h1><div class="sub">Дисциплина каждый день — без перегруза.</div></div><div class="top-right"><div class="date" id="todayLabel"></div><button class="site-reload" id="siteReloadBtn" type="button" aria-label="Перезагрузить сайт" title="Перезагрузить сайт">↻</button></div></header>
-  <div class="section-title">Расписание ГУЗ</div>
-<section class="card">
-  <div class="ruz-view-switch" role="group" aria-label="Вид расписания">
-    <button type="button" data-ruz-view="day">По дням</button>
-    <button type="button" data-ruz-view="week">Неделя</button>
-    <button type="button" data-ruz-view="month">Месяц</button>
-  </div>
-  <div class="ruz-period-nav">
-    <button type="button" id="ruzPrevPeriod" aria-label="Предыдущий период">‹</button>
-    <strong id="ruzPeriodTitle">Текущий период</strong>
-    <button type="button" id="ruzNextPeriod" aria-label="Следующий период">›</button>
-  </div>
-  <div class="ruz-day-strip" id="ruzDayTabs"></div>
-  <div class="ruz-month-grid hidden" id="ruzMonthGrid"></div>
-  <div class="fields">
-    <div style="grid-column:1/-1">
-      <label class="tiny" for="ruzGroup">Учебная группа</label>
-      <input id="ruzGroup" class="field" list="ruzGroups" placeholder="Например, Г.ПГ.26.С1" autocomplete="off">
-      <datalist id="ruzGroups"></datalist>
-    </div>
-    <div>
-      <label class="tiny" for="ruzSubgroup">Подгруппа</label>
-      <select id="ruzSubgroup" class="field">
-        <option value="">Все подгруппы</option>
-        <option value="1">Подгруппа 1</option>
-        <option value="2">Подгруппа 2</option>
-      </select>
-    </div>
-    <div>
-      <label class="tiny" for="ruzDate">Дата недели</label>
-      <input id="ruzDate" class="field" type="date">
-    </div>
-  </div>
-  <div class="ruz-load-actions" style="margin-top:12px">
-    <button class="btn secondary" id="ruzTodayBtn">Эта неделя</button>
-    <button class="btn secondary" id="ruzGapsBtn" type="button">Свободные окна</button>
-    <button class="btn ruz-load-main" id="ruzLoadBtn">Загрузить расписание</button>
-  </div>
-  <div class="note" id="ruzStatus" role="status" style="margin-top:10px">Загружаем список групп РУЗ…</div>
-  <div id="schedule"><div class="empty">Выбери группу и загрузи расписание.</div></div>
-</section>
-
-  <div class="section-title">План на день</div>
-  <section class="card">
-    <div class="dayhead"><div><strong id="selectedDateLabel">Сегодня</strong><div class="tiny">Отмечай выполненное — данные сохраняются на этом устройстве.</div></div><input id="dayPicker" class="field" type="date" style="max-width:150px"></div>
-    <div class="daily-tools">
-      <div class="daily-switch" role="group" aria-label="Вид плана">
-        <button type="button" id="dailyCompactBtn" class="active">Компактно</button>
-        <button type="button" id="dailyDetailBtn">Подробно</button>
-      </div>
-      <div class="day-plan-summary" id="dayPlanSummary">Можно назначить время задачам</div>
-    </div>
-    <div id="dailyTasks"></div>
-    <div class="day-summary" id="daySummary">
-      <div class="row"><strong>Итог дня</strong><strong id="daySummaryPercent">0%</strong></div>
-      <div class="tiny" id="daySummaryStats">Выполнено 0 из 0 · осталось 0</div>
-      <div class="tiny" id="carryoverNote" style="margin-top:5px">Незавершённые личные задачи переносятся автоматически.</div>
-      <label class="tiny" for="dayReflection" style="display:block;margin-top:11px">Что получилось сегодня?</label>
-      <textarea id="dayReflection" class="field" rows="2" placeholder="Коротко запиши успехи или мысли за день..." style="margin-top:5px;resize:vertical"></textarea>
-    </div>
-    <div class="actions" style="margin-top:12px"><button class="btn secondary" id="addTaskBtn">＋ Своя задача</button><button class="btn secondary" id="resetDayBtn">Сбросить день</button></div>
-  </section>
-
-  <section class="card hero">
-    <div class="row"><div><div class="muted">Прогресс за сегодня</div><div class="big" id="percent">0%</div></div><div style="text-align:right"><div class="muted">Выполнено</div><strong id="doneCount">0 из 0</strong></div></div>
-    <div class="progress-wrap"><div class="progress" id="progress"></div></div>
-    <div class="tiny" id="motivation">Начни с одного небольшого действия.</div>
-  </section>
-
-
 
 <section id="trainModule" class="train-module" data-theme="light" aria-labelledby="trainTitle">
   <header class="tm-header">
@@ -603,6 +533,79 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
     <button type="button" data-train-nav="favorites"><span>☆</span>Избранное</button>
   </nav>
 </section>
+
+  <div class="section-title">Расписание ГУЗ</div>
+<section class="card">
+  <div class="ruz-view-switch" role="group" aria-label="Вид расписания">
+    <button type="button" data-ruz-view="day">По дням</button>
+    <button type="button" data-ruz-view="week">Неделя</button>
+    <button type="button" data-ruz-view="month">Месяц</button>
+  </div>
+  <div class="ruz-period-nav">
+    <button type="button" id="ruzPrevPeriod" aria-label="Предыдущий период">‹</button>
+    <strong id="ruzPeriodTitle">Текущий период</strong>
+    <button type="button" id="ruzNextPeriod" aria-label="Следующий период">›</button>
+  </div>
+  <div class="ruz-day-strip" id="ruzDayTabs"></div>
+  <div class="ruz-month-grid hidden" id="ruzMonthGrid"></div>
+  <div class="fields">
+    <div style="grid-column:1/-1">
+      <label class="tiny" for="ruzGroup">Учебная группа</label>
+      <input id="ruzGroup" class="field" list="ruzGroups" placeholder="Например, Г.ПГ.26.С1" autocomplete="off">
+      <datalist id="ruzGroups"></datalist>
+    </div>
+    <div>
+      <label class="tiny" for="ruzSubgroup">Подгруппа</label>
+      <select id="ruzSubgroup" class="field">
+        <option value="">Все подгруппы</option>
+        <option value="1">Подгруппа 1</option>
+        <option value="2">Подгруппа 2</option>
+      </select>
+    </div>
+    <div>
+      <label class="tiny" for="ruzDate">Дата недели</label>
+      <input id="ruzDate" class="field" type="date">
+    </div>
+  </div>
+  <div class="ruz-load-actions" style="margin-top:12px">
+    <button class="btn secondary" id="ruzTodayBtn">Эта неделя</button>
+    <button class="btn secondary" id="ruzGapsBtn" type="button">Свободные окна</button>
+    <button class="btn ruz-load-main" id="ruzLoadBtn">Загрузить расписание</button>
+  </div>
+  <div class="note" id="ruzStatus" role="status" style="margin-top:10px">Загружаем список групп РУЗ…</div>
+  <div id="schedule"><div class="empty">Выбери группу и загрузи расписание.</div></div>
+</section>
+
+  <div class="section-title">План на день</div>
+  <section class="card">
+    <div class="dayhead"><div><strong id="selectedDateLabel">Сегодня</strong><div class="tiny">Отмечай выполненное — данные сохраняются на этом устройстве.</div></div><input id="dayPicker" class="field" type="date" style="max-width:150px"></div>
+    <div class="daily-tools">
+      <div class="daily-switch" role="group" aria-label="Вид плана">
+        <button type="button" id="dailyCompactBtn" class="active">Компактно</button>
+        <button type="button" id="dailyDetailBtn">Подробно</button>
+      </div>
+      <div class="day-plan-summary" id="dayPlanSummary">Можно назначить время задачам</div>
+    </div>
+    <div id="dailyTasks"></div>
+    <div class="day-summary" id="daySummary">
+      <div class="row"><strong>Итог дня</strong><strong id="daySummaryPercent">0%</strong></div>
+      <div class="tiny" id="daySummaryStats">Выполнено 0 из 0 · осталось 0</div>
+      <div class="tiny" id="carryoverNote" style="margin-top:5px">Незавершённые личные задачи переносятся автоматически.</div>
+      <label class="tiny" for="dayReflection" style="display:block;margin-top:11px">Что получилось сегодня?</label>
+      <textarea id="dayReflection" class="field" rows="2" placeholder="Коротко запиши успехи или мысли за день..." style="margin-top:5px;resize:vertical"></textarea>
+    </div>
+    <div class="actions" style="margin-top:12px"><button class="btn secondary" id="addTaskBtn">＋ Своя задача</button><button class="btn secondary" id="resetDayBtn">Сбросить день</button></div>
+  </section>
+
+  <section class="card hero">
+    <div class="row"><div><div class="muted">Прогресс за сегодня</div><div class="big" id="percent">0%</div></div><div style="text-align:right"><div class="muted">Выполнено</div><strong id="doneCount">0 из 0</strong></div></div>
+    <div class="progress-wrap"><div class="progress" id="progress"></div></div>
+    <div class="tiny" id="motivation">Начни с одного небольшого действия.</div>
+  </section>
+
+
+
+
 
   <div class="section-title">Мои направления</div>
   <div class="two">
