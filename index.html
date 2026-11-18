@@ -791,14 +791,20 @@ function createStationField(route,side,labelText){
     save();
     const current=++requestNumber;
     list.innerHTML="";
-    if(input.value.trim().length<2){list.classList.add("hidden");return;}
+    if(input.value.trim().length<1){list.classList.add("hidden");return;}
     const query=input.value.trim();
-    fetch(TRAINS_API+"/stations?q="+encodeURIComponent(query)+"&limit=12")
+    fetch(TRAINS_API+"/stations?q="+encodeURIComponent(query)+"&limit=20")
       .then(response=>{if(!response.ok)throw new Error("Ошибка поиска станций");return response.json()})
       .then(payload=>{
         if(current!==requestNumber)return;
         list.innerHTML="";
-        (payload.stations||[]).forEach(station=>{
+        const stations=(payload.stations||[]).slice().sort((a,b)=>{
+          const aStarts=String(a.title||"").toLocaleLowerCase("ru").startsWith(query.toLocaleLowerCase("ru"));
+          const bStarts=String(b.title||"").toLocaleLowerCase("ru").startsWith(query.toLocaleLowerCase("ru"));
+          if(aStarts!==bStarts)return aStarts?-1:1;
+          return String(a.title||"").localeCompare(String(b.title||""),"ru");
+        });
+        stations.forEach(station=>{
           const option=document.createElement("button");
           option.type="button";
           option.className="station-option";
