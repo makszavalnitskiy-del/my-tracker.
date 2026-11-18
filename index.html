@@ -221,6 +221,30 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
   }
 }
 
+
+/* Кнопки управления расписанием: дополнительные сверху, загрузка по центру снизу */
+.ruz-load-actions{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:9px;
+  width:100%;
+}
+.ruz-load-actions>.btn{
+  width:100%;
+  min-width:0;
+  min-height:48px;
+  padding:10px 8px;
+  text-align:center;
+}
+.ruz-load-actions>.ruz-load-main{
+  grid-column:1 / -1;
+  justify-self:center;
+  width:100%;
+  min-height:62px;
+  font-size:17px;
+  padding:14px 16px;
+}
+
 </style>
 </head>
 <body>
@@ -259,10 +283,10 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
       <input id="ruzDate" class="field" type="date">
     </div>
   </div>
-  <div class="actions" style="margin-top:12px">
-    <button class="btn" id="ruzLoadBtn" style="flex:1">Загрузить расписание</button>
+  <div class="ruz-load-actions" style="margin-top:12px">
     <button class="btn secondary" id="ruzTodayBtn">Эта неделя</button>
     <button class="btn secondary" id="ruzGapsBtn" type="button">Свободные окна</button>
+    <button class="btn ruz-load-main" id="ruzLoadBtn">Загрузить расписание</button>
   </div>
   <div class="note" id="ruzStatus" role="status" style="margin-top:10px">Загружаем список групп РУЗ…</div>
   <div id="schedule"><div class="empty">Выбери группу и загрузи расписание.</div></div>
