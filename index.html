@@ -339,7 +339,7 @@ body[data-theme="dark"] .site-reload,body[data-theme="dark"] .site-theme{backgro
   --tm-bg:#f5f7fa;--tm-card:#ffffff;--tm-text:#17212f;--tm-muted:#465365;
   --tm-line:#cbd5e1;--tm-blue:#123f70;--tm-blue-soft:#e8f0f8;
   --tm-green:#075b3b;--tm-green-soft:#e7f5ee;--tm-amber:#763f00;--tm-amber-soft:#fff3d9;
-  --tm-red:#8e1924;--tm-red-soft:#fdebed;
+  --tm-red:#8e1924;--tm-red-soft:#fdebed;--tm-passed-bg:#eef1f4;
   width:100%;margin:26px 0 18px;padding:clamp(14px,2.8vw,28px);
   color:var(--tm-text);background:var(--tm-bg);border:1px solid #dce3eb;
   border-radius:24px;box-shadow:0 8px 28px rgba(15,35,60,.08);
@@ -350,7 +350,7 @@ body[data-theme="dark"] .site-reload,body[data-theme="dark"] .site-theme{backgro
   --tm-bg:#111925;--tm-card:#1b2635;--tm-text:#f2f6fb;--tm-muted:#c0ccda;
   --tm-line:#405066;--tm-blue:#8db9ee;--tm-blue-soft:#243c58;
   --tm-green:#75d6a7;--tm-green-soft:#173e31;--tm-amber:#ffd18a;--tm-amber-soft:#49371e;
-  --tm-red:#ff9da6;--tm-red-soft:#48262c;
+  --tm-red:#ff9da6;--tm-red-soft:#48262c;--tm-passed-bg:#202a36;
   border-color:#344255;box-shadow:0 8px 28px rgba(0,0,0,.18);color-scheme:dark;
 }
 .train-module *{box-sizing:border-box}
@@ -423,7 +423,11 @@ body[data-theme="dark"] .site-reload,body[data-theme="dark"] .site-theme{backgro
 .tm-count-line{margin:0 0 8px;color:var(--tm-muted);font-size:11px}
 .tm-train-card{position:relative;margin:9px 0;padding:15px 16px;background:var(--tm-card);border:1px solid var(--tm-line);border-radius:16px;box-shadow:0 3px 12px rgba(15,35,60,.035)}
 .tm-train-card.tm-next{border:1.5px solid var(--tm-green);box-shadow:0 0 0 3px color-mix(in srgb,var(--tm-green) 10%,transparent)}
-.tm-train-card.tm-passed{opacity:.52}
+.tm-train-card.tm-passed{background:var(--tm-passed-bg);border-color:var(--tm-line);filter:grayscale(1);opacity:.76;box-shadow:none}
+.tm-train-card.tm-passed .tm-status{color:var(--tm-muted)}
+.tm-platform{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:7px;background:var(--tm-blue-soft);color:var(--tm-blue);font-size:10px;font-weight:800}
+.tm-platform::before{content:"↔";font-size:11px}
+.tm-train-card.tm-passed .tm-platform{background:var(--tm-bg);color:var(--tm-muted)}
 .tm-train-card.tm-cancelled{border-color:color-mix(in srgb,var(--tm-red) 55%,var(--tm-line))}
 .tm-train-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .tm-times{display:flex;align-items:center;gap:10px;min-width:0;font-variant-numeric:tabular-nums}
@@ -469,7 +473,7 @@ body[data-theme="dark"] .site-reload,body[data-theme="dark"] .site-theme{backgro
   .tm-swap{grid-column:1;grid-row:2;justify-self:center;align-self:center;width:44px;margin:0}
   .tm-station-field:last-child{grid-column:1;grid-row:3}
   .tm-filter-row{align-items:flex-start;flex-direction:column;gap:7px}
-  .tm-filter-group{width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+  .tm-filter-group{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
   .tm-filter{padding:0 5px;font-size:10px}
   .tm-favorites-list{grid-template-columns:1fr}
   .tm-bottom-nav{position:sticky;z-index:20;bottom:0;display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:18px -13px -13px;padding:9px 13px calc(9px + env(safe-area-inset-bottom));border-top:1px solid var(--tm-line);border-radius:0 0 19px 19px;background:color-mix(in srgb,var(--tm-bg) 94%,transparent);backdrop-filter:blur(14px)}
@@ -562,7 +566,8 @@ body[data-theme="dark"] .site-reload,body[data-theme="dark"] .site-theme{backgro
       <div class="tm-filter-group" role="group" aria-label="Фильтр рейсов">
         <button class="tm-filter active" type="button" data-train-filter="all">Все рейсы</button>
         <button class="tm-filter" type="button" data-train-filter="near">Ближайшие</button>
-        <button class="tm-filter" type="button" data-train-filter="express" id="trainExpressFilter" disabled title="Фильтр станет доступен, когда API вернёт типы поездов">Экспрессы</button>
+        <button class="tm-filter" type="button" data-train-filter="departed">Ушедшие</button>
+        <button class="tm-filter" type="button" data-train-filter="express" id="trainExpressFilter" disabled title="Фильтр доступен, если API позволяет определить тип поезда">Экспрессы</button>
       </div>
     </div>
 
@@ -1141,9 +1146,14 @@ function trainSameDay(value,date){
   return !Number.isNaN(d.getTime())&&localDate(d)===date;
 }
 function trainIsPassed(segment){
-  if(!trainSameDay(segment.departure,trainSearchState.date))return false;
+  if(!segment||!segment.departure)return false;
   const departure=new Date(segment.departure);
   return !Number.isNaN(departure.getTime())&&departure.getTime()<Date.now();
+}
+function trainPlatformText(value){
+  const platform=String(value||"").trim();
+  if(!platform)return "";
+  return /путь|платформ/i.test(platform)?platform:"путь "+platform;
 }
 function trainType(segment){
   const thread=segment.thread||{};
@@ -1192,6 +1202,7 @@ function trainRenderSegments(){
   const host=document.getElementById("trainResults");
   const filtered=trainSegments.filter(segment=>{
     if(trainCurrentFilter==="express")return trainIsExpress(segment);
+    if(trainCurrentFilter==="departed")return trainIsPassed(segment);
     return true;
   });
   const visible=trainCurrentFilter==="near"
@@ -1204,8 +1215,8 @@ function trainRenderSegments(){
   count.textContent="Найдено рейсов: "+visible.length;
   host.appendChild(count);
   if(!visible.length){
-    const title=trainCurrentFilter==="express"?"Экспрессы не найдены":"Подходящих отправлений нет";
-    const message=trainCurrentFilter==="near"?"На выбранную дату больше нет будущих отправлений.":"Попробуйте изменить дату или маршрут.";
+    const title=trainCurrentFilter==="express"?"Экспрессы не найдены":trainCurrentFilter==="departed"?"Ушедших электричек пока нет":"Подходящих отправлений нет";
+    const message=trainCurrentFilter==="near"?"На выбранную дату больше нет будущих отправлений.":trainCurrentFilter==="departed"?"На выбранную дату ещё нет отправлений, которые уже ушли.":"Попробуйте изменить дату или маршрут.";
     const empty=document.createElement("div");
     empty.className="tm-empty tm-empty-compact";
     trainAppendText(empty,"strong","",title);
@@ -1219,7 +1230,7 @@ function trainRenderSegments(){
   filtered.forEach(segment=>{if(!trainIsPassed(segment))hasFuture=true;});
   visible.forEach((segment,index)=>{
     const passed=trainIsPassed(segment);
-    if(nowIsCurrent&&!nowDividerAdded&&hasFuture&&passed===false&&filtered.some(trainIsPassed)){
+    if(trainCurrentFilter!=="departed"&&nowIsCurrent&&!nowDividerAdded&&hasFuture&&passed===false&&filtered.some(trainIsPassed)){
       const divider=document.createElement("div");
       divider.className="tm-now-divider";
       const line=document.createElement("span");
@@ -1261,7 +1272,10 @@ function trainRenderSegments(){
     else if(segment.thread&&(segment.thread.title||segment.thread.short_title)){
       trainAppendText(details,"span","tm-type-badge",segment.thread.short_title||segment.thread.title);
     }
-    if(segment.departure_platform)trainAppendText(details,"span","tm-detail","Платформа "+segment.departure_platform);
+    const departurePlatform=trainPlatformText(segment.departure_platform);
+    const arrivalPlatform=trainPlatformText(segment.arrival_platform);
+    if(departurePlatform)trainAppendText(details,"span","tm-platform tm-platform-departure","Отправление · "+departurePlatform);
+    if(arrivalPlatform)trainAppendText(details,"span","tm-platform tm-platform-arrival","Прибытие · "+arrivalPlatform);
     if(Array.isArray(segment.stops)&&segment.stops.length)trainAppendText(details,"span","tm-detail",segment.stops.length+" остановок");
     else if(typeof segment.stops==="number"&&segment.stops>0)trainAppendText(details,"span","tm-detail",segment.stops+" остановок");
     if(details.children.length)card.appendChild(details);
