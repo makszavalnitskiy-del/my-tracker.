@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#0b0d12">
 <title>Мой ритм — личный трекер</title>
 <style>
-:root{--bg:#0b0d12;--panel:#131722;--panel2:#191f2c;--line:#262d3b;--text:#eef2f8;--muted:#8e9aaf;--accent:#9b8cff;--green:#63d6a4;--orange:#ffbd69;--red:#ff7e8b}
+:root{--bg:#f5f7fa;--panel:#ffffff;--panel2:#edf2f7;--line:#d8e0e9;--text:#17212f;--muted:#526174;--accent:#174d7a;--green:#087147;--orange:#8b4c00;--red:#a3202d;--surface:#ffffff;--surface-soft:#f0f4f8;--surface-input:#ffffff;--accent-soft:#e8f0f8}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% -10%,#242044 0,transparent 38%),var(--bg);color:var(--text);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
 button,input,select{font:inherit}button{cursor:pointer}.app{max-width:760px;margin:auto;padding:22px 16px 48px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}.brand{font-size:13px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}.date{font-size:13px;color:var(--muted)}h1{font-size:29px;line-height:1.1;margin:7px 0 4px;letter-spacing:-.04em}.sub{color:var(--muted);font-size:14px}.card{background:linear-gradient(145deg,rgba(25,31,44,.97),rgba(17,21,30,.97));border:1px solid var(--line);border-radius:19px;padding:17px;margin:13px 0;box-shadow:0 10px 35px #0002}.hero{padding:20px}.row{display:flex;align-items:center;justify-content:space-between;gap:12px}.progress-wrap{height:9px;background:#272e3c;border-radius:20px;overflow:hidden;margin:13px 0 7px}.progress{height:100%;width:0;background:linear-gradient(90deg,var(--accent),#6bd8c2);border-radius:20px;transition:width .2s}.big{font-size:30px;font-weight:750;letter-spacing:-.04em}.muted{color:var(--muted)}.tiny{font-size:12px;color:var(--muted)}.section-title{font-size:17px;font-weight:700;margin:24px 2px 8px;letter-spacing:-.02em}.pill{border:1px solid var(--line);background:#1a2030;color:var(--text);padding:8px 11px;border-radius:12px;font-size:13px}.pill.active{background:#302b53;border-color:#6f62c3;color:#e7e2ff}.tabs{display:flex;gap:7px;overflow:auto;padding:2px 0 5px}.tab{white-space:nowrap}.task{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #242b38}.task:last-child{border-bottom:0}.check{appearance:none;width:22px;height:22px;border:1.5px solid #59647a;border-radius:7px;flex:none;background:#111620;position:relative}.check:checked{background:var(--green);border-color:var(--green)}.check:checked:after{content:"✓";position:absolute;color:#08150f;font-weight:900;left:4px;top:-1px}.task.done .task-name{text-decoration:line-through;color:#788397}.task-name{font-weight:550}.task-desc{font-size:12px;color:var(--muted);margin-top:2px}
 .daily-tools{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 0 6px;flex-wrap:wrap}
@@ -271,6 +271,69 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
 .train-status{font-size:12px;color:var(--muted);margin-top:10px}
 
 
+
+/* Единая тема всего приложения «Мой ритм» */
+body{background:var(--bg)!important;color:var(--text)!important;transition:background-color .18s ease,color .18s ease}
+.card{background:var(--surface)!important;border-color:var(--line)!important;box-shadow:0 6px 22px rgba(20,45,75,.055)!important}
+.hero{background:var(--surface)!important}
+.section-title{color:var(--text)}
+.brand,.date,.sub,.muted,.tiny,.note,.task-desc,.room,.footer{color:var(--muted)}
+.progress-wrap,.barline,.live-track,.pair-track{background:var(--surface-soft)}
+.pill{background:var(--surface-soft);border-color:var(--line);color:var(--text)}
+.pill.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.task,.compact-task,.schedule-item{border-color:var(--line)}
+.check{background:var(--surface-input);border-color:#8290a2}
+.check:checked:after{color:#fff}
+.task.done .task-name{color:var(--muted)}
+.daily-switch{background:var(--surface-soft);border-color:var(--line)}
+.daily-switch button.active{background:var(--accent);color:#fff}
+.task-time,.task-duration,.field,select.field,input.field,textarea.field{background:var(--surface-input);border-color:var(--line);color:var(--text)}
+.field:focus,.task-time:focus,.task-duration:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 15%,transparent)}
+.day-summary,.stat,.live-progress,.route-card,.ruz-period-nav,.ruz-week-card,.ruz-month-grid button{background:var(--surface-soft);border-color:var(--line);color:var(--text)}
+.stat span,.day-summary,.live-caption span,.live-foot{color:var(--muted)}
+.tag{background:var(--accent-soft);color:var(--accent)}
+.time{color:var(--accent);font-variant-numeric:tabular-nums}
+.btn{background:var(--accent);color:#fff}
+.btn.secondary{background:var(--surface-soft);border:1px solid var(--line);color:var(--text)}
+.btn.danger{background:#fdebed;color:#8e1924}
+.empty{color:var(--muted)}
+.site-reload,.site-theme{background:var(--surface);border:1px solid var(--line);color:var(--text)}
+.site-theme{width:40px;height:40px;min-height:40px;padding:0;border-radius:12px;font-size:19px}
+.top-right{gap:8px}
+.ruz-view-switch{background:var(--surface-soft);border-color:var(--line)}
+.ruz-view-switch button.active{background:var(--surface);color:var(--green);box-shadow:0 2px 8px rgba(15,35,60,.10)}
+.ruz-period-nav{background:var(--surface-soft);border-color:var(--line)}
+.ruz-period-nav button{background:var(--surface);color:var(--accent)}
+.ruz-day-strip button{color:var(--muted)}
+.ruz-day-strip button .ruz-daynum{color:var(--text)}
+.ruz-day-strip button.today .ruz-daynum,.ruz-day-strip button.today .ruz-weekday{color:var(--green)}
+.ruz-day-strip button.selected{background:#e5f3ec;border-color:#5a9a78;color:#145d3b}
+.ruz-day-strip button.selected .ruz-daynum{color:#145d3b}
+.ruz-month-grid button{background:var(--surface-soft);color:var(--text)}
+.ruz-month-grid button.today{color:var(--green);border-color:var(--green)}
+.ruz-month-grid button.selected{background:#e5f3ec;color:#145d3b;border-color:#5a9a78}
+.ruz-week-card{background:var(--surface-soft);border-color:var(--line)}
+.ruz-week-card.current{border-color:var(--green);box-shadow:0 0 0 1px color-mix(in srgb,var(--green) 15%,transparent)}
+.ruz-week-card-head{border-color:var(--line)}
+.ruz-week-card-head .ruz-count{background:#e5f3ec;color:#145d3b}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 55%,transparent);outline-offset:2px}
+body[data-theme="dark"]{
+  --bg:#0c121b;--panel:#151e2a;--panel2:#1c2837;--line:#334255;--text:#edf3fa;--muted:#b1bfce;
+  --accent:#8db9ee;--green:#75d6a7;--orange:#ffd18a;--red:#ff9da6;
+  --surface:#151f2c;--surface-soft:#1b2938;--surface-input:#101a26;--accent-soft:#243c58;
+}
+body[data-theme="dark"] .card{box-shadow:0 8px 26px rgba(0,0,0,.18)!important}
+body[data-theme="dark"] .progress-wrap,body[data-theme="dark"] .barline,body[data-theme="dark"] .live-track,body[data-theme="dark"] .pair-track{background:#263548}
+body[data-theme="dark"] .check{background:#101a26;border-color:#73849a}
+body[data-theme="dark"] .check:checked{background:var(--green);border-color:var(--green)}
+body[data-theme="dark"] .check:checked:after{color:#092216}
+body[data-theme="dark"] .btn.danger{background:#48262c;color:#ffb8bf}
+body[data-theme="dark"] .ruz-day-strip button.selected,body[data-theme="dark"] .ruz-month-grid button.selected{background:#203b30;border-color:#397c59;color:#9be2b6}
+body[data-theme="dark"] .ruz-day-strip button.selected .ruz-daynum{color:#9be2b6}
+body[data-theme="dark"] .ruz-week-card-head .ruz-count{background:#203b30;color:#9be2b6}
+body[data-theme="dark"] .site-reload,body[data-theme="dark"] .site-theme{background:var(--surface-soft);color:var(--text);border-color:var(--line)}
+@media(max-width:430px){.site-theme{width:38px;height:38px;min-height:38px}.top-right{gap:6px}}
+
 /* Современный адаптивный интерфейс электричек — изолирован от остальных разделов */
 .train-module{
   --tm-bg:#f5f7fa;--tm-card:#ffffff;--tm-text:#17212f;--tm-muted:#465365;
@@ -441,7 +504,7 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
 </head>
 <body>
 <div class="app">
-  <header class="top"><div><div class="brand">PERSONAL TRACKER</div><h1>Мой ритм<span style="color:var(--accent)">.</span></h1><div class="sub">Дисциплина каждый день — без перегруза.</div></div><div class="top-right"><div class="date" id="todayLabel"></div><button class="site-reload" id="siteReloadBtn" type="button" aria-label="Перезагрузить сайт" title="Перезагрузить сайт">↻</button></div></header>
+  <header class="top"><div><div class="brand">PERSONAL TRACKER</div><h1>Мой ритм<span style="color:var(--accent)">.</span></h1><div class="sub">Дисциплина каждый день — без перегруза.</div></div><div class="top-right"><div class="date" id="todayLabel"></div><button class="site-theme" id="themeToggle" type="button" aria-label="Включить тёмную тему" title="Переключить тему">☾</button><button class="site-reload" id="siteReloadBtn" type="button" aria-label="Перезагрузить сайт" title="Перезагрузить сайт">↻</button></div></header>
 
 <section id="trainModule" class="train-module" data-theme="light" aria-labelledby="trainTitle">
   <header class="tm-header">
@@ -452,7 +515,7 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
     <div class="tm-header-actions">
       <span class="tm-live" id="trainDataStatus"><i></i> Ожидает поиска</span>
       <button class="tm-icon-btn" type="button" id="trainFavoriteToggle" aria-label="Добавить маршрут в избранное" title="Избранное">☆</button>
-      <button class="tm-icon-btn" type="button" id="trainThemeToggle" aria-label="Включить тёмную тему" title="Тема">☾</button>
+      
     </div>
   </header>
 
@@ -1022,15 +1085,21 @@ function trainPersistSearch(){
   save();
 }
 function trainTheme(){
-  return data.settings.trainTheme==="dark"?"dark":"light";
+  return data.settings.appTheme==="dark"?"dark":"light";
 }
 function trainSetTheme(){
+  const theme=trainTheme();
+  document.body.dataset.theme=theme;
   const module=document.getElementById("trainModule");
-  if(!module)return;
-  module.dataset.theme=trainTheme();
-  const button=document.getElementById("trainThemeToggle");
-  button.textContent=trainTheme()==="dark"?"☀":"☾";
-  button.setAttribute("aria-label",trainTheme()==="dark"?"Включить светлую тему":"Включить тёмную тему");
+  if(module)module.dataset.theme=theme;
+  const button=document.getElementById("themeToggle");
+  if(button){
+    button.textContent=theme==="dark"?"☀":"☾";
+    button.setAttribute("aria-label",theme==="dark"?"Включить светлую тему":"Включить тёмную тему");
+    button.title=theme==="dark"?"Включить светлую тему":"Включить тёмную тему";
+  }
+  const meta=document.querySelector('meta[name="theme-color"]');
+  if(meta)meta.setAttribute("content",theme==="dark"?"#111925":"#f5f7fa");
 }
 function trainSetStatus(state,label){
   const el=document.getElementById("trainDataStatus");
@@ -1536,8 +1605,8 @@ function initTrainModule(){
   }));
   document.getElementById("trainSearchButton").addEventListener("click",trainSearch);
   document.getElementById("trainFavoriteToggle").addEventListener("click",trainToggleFavorite);
-  document.getElementById("trainThemeToggle").addEventListener("click",()=>{
-    data.settings.trainTheme=trainTheme()==="dark"?"light":"dark";
+  document.getElementById("themeToggle").addEventListener("click",()=>{
+    data.settings.appTheme=trainTheme()==="dark"?"light":"dark";
     save();
     trainSetTheme();
   });
@@ -1572,7 +1641,7 @@ document.getElementById("importBtn").onclick=()=>document.getElementById("import
 document.getElementById("importFile").onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let obj=JSON.parse(await f.text());if(!obj.days||!obj.settings)throw Error();data=obj;save();renderTasks();const saved=data.settings.trainSearch||{},legacy=Array.isArray(data.settings.routes)&&data.settings.routes.length?data.settings.routes[0]:{};trainSearchState={from:saved.from||legacy.from||"",fromCode:saved.fromCode||legacy.fromCode||"",fromMeta:saved.fromMeta||legacy.fromMeta||"",to:saved.to||legacy.to||"",toCode:saved.toCode||legacy.toCode||"",toMeta:saved.toMeta||legacy.toMeta||"",date:saved.date||localDate()};trainResetResults("Резервная копия восстановлена. Выполните поиск, чтобы загрузить актуальные данные.");trainSyncInputs();trainRenderFavorites();trainUpdateFavoriteButton();alert("Резервная копия загружена")}catch(err){alert("Не удалось прочитать файл резервной копии")}};
 document.getElementById("todayLabel").textContent=new Date().toLocaleDateString("ru-RU",{day:"numeric",month:"short"});
 document.getElementById("siteReloadBtn").addEventListener("click",()=>window.location.reload());
-renderTasks();renderStats();initTrainModule();
+trainSetTheme();renderTasks();renderStats();initTrainModule();
 document.getElementById("ruzGroup").value=data.settings.ruzGroup||"Г.ПГ.26.С1";
 document.getElementById("ruzSubgroup").value=data.settings.ruzSubgroup||"";
 document.getElementById("ruzDate").value=localDate();
