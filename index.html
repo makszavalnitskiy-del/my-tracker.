@@ -403,11 +403,18 @@ async function loadRuzWeek(){
       catch(error){return {date,items:[],error:error.message};}
     }));
     results.forEach(result=>{
-      const lessons=result.items.filter(item=>matchesRuzGroup(item,selected,name)).filter(item=>{
+      const normalized=result.items.filter(item=>matchesRuzGroup(item,selected,name)).filter(item=>{
         const sub=String(item.subGroupName??item.subgroupName??"");
         return !subgroup||!sub||new RegExp("\\("+subgroup+"\\)").test(sub)||sub.trim()===subgroup;
       }).map(apiLesson).sort((a,b)=>a.order-b.order);
-      ruzWeekData[result.date]=lessons;
+      // Защита от повторов, если РУЗ вернул одну и ту же запись несколько раз.
+      const seenLessons=new Set();
+      ruzWeekData[result.date]=normalized.filter(lesson=>{
+        const key=[lesson.time,lesson.subject,lesson.details].join("|");
+        if(seenLessons.has(key))return false;
+        seenLessons.add(key);
+        return true;
+      });
     });
     data.settings.ruzGroup=name;data.settings.ruzSubgroup=subgroup;
     data.settings.ruzWeekStart=monday;data.settings.ruzViewMode=ruzViewMode;save();
@@ -431,6 +438,9 @@ function shiftRuzPeriod(direction){
 }
 function renderRuzWeek(){
   const tabs=document.getElementById("ruzDayTabs"),grid=document.getElementById("ruzMonthGrid"),host=document.getElementById("schedule");
+  // Полностью заменяем содержимое при каждом рендере: таймер обновляет шкалу каждую минуту,
+  // поэтому без очистки карточки дней и пары накапливались при прокрутке.
+  host.replaceChildren();
   const anchor=document.getElementById("ruzDate").value||localDate(),monday=mondayOf(anchor);
   const weekDates=Array.from({length:7},(_,i)=>addDays(monday,i));
   if(!ruzSelectedDate||(!ruzWeekData[ruzSelectedDate]&&ruzViewMode!=="month"))ruzSelectedDate=weekDates.includes(localDate())?localDate():weekDates[0];
