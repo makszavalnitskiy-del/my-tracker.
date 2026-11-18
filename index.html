@@ -564,9 +564,10 @@ body[data-theme="dark"] .site-reload,body[data-theme="dark"] .site-theme{backgro
     <div class="tm-filter-row">
       <span class="tm-control-label">Показывать</span>
       <div class="tm-filter-group" role="group" aria-label="Фильтр рейсов">
-        <button class="tm-filter active" type="button" data-train-filter="all">Все рейсы</button>
-        <button class="tm-filter" type="button" data-train-filter="near">Ближайшие</button>
+        <button class="tm-filter active" type="button" data-train-filter="all">Все</button>
+        <button class="tm-filter" type="button" data-train-filter="upcoming">Будущие</button>
         <button class="tm-filter" type="button" data-train-filter="departed">Ушедшие</button>
+        <button class="tm-filter" type="button" data-train-filter="near">Ближайшие</button>
         <button class="tm-filter" type="button" data-train-filter="express" id="trainExpressFilter" disabled title="Фильтр доступен, если API позволяет определить тип поезда">Экспрессы</button>
       </div>
     </div>
@@ -1203,6 +1204,7 @@ function trainRenderSegments(){
   const filtered=trainSegments.filter(segment=>{
     if(trainCurrentFilter==="express")return trainIsExpress(segment);
     if(trainCurrentFilter==="departed")return trainIsPassed(segment);
+    if(trainCurrentFilter==="upcoming")return !trainIsPassed(segment)&&!trainIsCancelled(segment);
     return true;
   });
   const visible=trainCurrentFilter==="near"
@@ -1215,8 +1217,8 @@ function trainRenderSegments(){
   count.textContent="Найдено рейсов: "+visible.length;
   host.appendChild(count);
   if(!visible.length){
-    const title=trainCurrentFilter==="express"?"Экспрессы не найдены":trainCurrentFilter==="departed"?"Ушедших электричек пока нет":"Подходящих отправлений нет";
-    const message=trainCurrentFilter==="near"?"На выбранную дату больше нет будущих отправлений.":trainCurrentFilter==="departed"?"На выбранную дату ещё нет отправлений, которые уже ушли.":"Попробуйте изменить дату или маршрут.";
+    const title=trainCurrentFilter==="express"?"Экспрессы не найдены":trainCurrentFilter==="departed"?"Ушедших электричек пока нет":trainCurrentFilter==="upcoming"?"Будущих отправлений нет":"Подходящих отправлений нет";
+    const message=trainCurrentFilter==="near"?"На выбранную дату больше нет будущих отправлений.":trainCurrentFilter==="departed"?"На выбранную дату ещё нет отправлений, которые уже ушли.":trainCurrentFilter==="upcoming"?"На выбранную дату больше нет будущих отправлений.":"Попробуйте изменить дату или маршрут.";
     const empty=document.createElement("div");
     empty.className="tm-empty tm-empty-compact";
     trainAppendText(empty,"strong","",title);
@@ -1475,7 +1477,11 @@ function trainBindStation(inputId,side){
         const payload=await response.json();
         if(thisRequest!==requestId)return;
         const needle=query.toLocaleLowerCase("ru");
-        const stations=(payload.stations||[]).slice().sort((a,b)=>{
+        const isRussianStation=station=>{
+          const country=String(station.country||"").trim().toLocaleLowerCase("ru");
+          return country==="россия"||country==="российская федерация"||country==="russia"||country==="ru";
+        };
+        const stations=(payload.stations||[]).filter(isRussianStation).slice().sort((a,b)=>{
           const aTitle=String(a.title||"").toLocaleLowerCase("ru");
           const bTitle=String(b.title||"").toLocaleLowerCase("ru");
           const aExact=aTitle===needle?0:1;
@@ -1484,7 +1490,9 @@ function trainBindStation(inputId,side){
           const aStarts=aTitle.startsWith(needle)?0:1;
           const bStarts=bTitle.startsWith(needle)?0:1;
           if(aStarts!==bStarts)return aStarts-bStarts;
-          return aTitle.localeCompare(bTitle,"ru");
+          const alphabet=aTitle.localeCompare(bTitle,"ru");
+          if(alphabet!==0)return alphabet;
+          return String(a.settlement||"").localeCompare(String(b.settlement||""),"ru");
         });
         renderOptions(stations);
       }catch(error){
