@@ -1472,18 +1472,43 @@ function trainBindStation(inputId,side){
     debounce=setTimeout(async()=>{
       controller=new AbortController();
       try{
-        const response=await fetch(TRAINS_API+"/stations?q="+encodeURIComponent(query)+"&limit=20",{signal:controller.signal});
-        if(!response.ok)throw new Error("Не удалось загрузить станции");
-        const payload=await response.json();
-        if(thisRequest!==requestId)return;
-        const needle=query.toLocaleLowerCase("ru");
-        const isRussianStation=station=>{
-          const country=String(station.country||"").trim().toLocaleLowerCase("ru");
-          return country==="россия"||country==="российская федерация"||country==="russia"||country==="ru";
+        const normalized=query.trim().replace(/ё/giu,"е").replace(/[–—]/g,"-");
+        const searchTerms=[query];
+        const addTerm=value=>{
+          const term=String(value||"").trim();
+          if(term.length>=3&&!searchTerms.some(item=>item.toLocaleLowerCase("ru")===term.toLocaleLowerCase("ru")))searchTerms.push(term);
         };
-        const stations=(payload.stations||[]).filter(isRussianStation).slice().sort((a,b)=>{
-          const aTitle=String(a.title||"").toLocaleLowerCase("ru");
-          const bTitle=String(b.title||"").toLocaleLowerCase("ru");
+        addTerm(normalized);
+        if(normalized.includes("-")){
+          const parts=normalized.split("-").map(part=>part.trim()).filter(Boolean);
+          parts.forEach(addTerm);
+          if(/курск/i.test(normalized)){
+            addTerm("Курская");
+            addTerm("Курский вокзал");
+          }
+        }
+        const stem=normalized.replace(/(ский|ская|ское|ские|ской|цкий|цкая)$/iu,"");
+        if(stem!==normalized)addTerm(stem);
+        const payloads=await Promise.all(searchTerms.slice(0,5).map(async term=>{
+          const response=await fetch(TRAINS_API+"/stations?q="+encodeURIComponent(term)+"&limit=20",{signal:controller.signal});
+          if(!response.ok)throw new Error("Не удалось загрузить станции");
+          return response.json();
+        }));
+        if(thisRequest!==requestId)return;
+        const allowedCountries=new Set(["россия","российская федерация","russia","ru","украина","ukraine","ua"]);
+        const isAllowedStation=station=>{
+          const country=String(station.country||"").trim().toLocaleLowerCase("ru");
+          return !country||allowedCountries.has(country);
+        };
+        const uniqueStations=new Map();
+        payloads.forEach(payload=>(payload.stations||[]).filter(isAllowedStation).forEach(station=>{
+          const key=String(station.code||"")+"|"+String(station.title||"")+"|"+String(station.settlement||"");
+          if(!uniqueStations.has(key))uniqueStations.set(key,station);
+        }));
+        const needle=normalized.toLocaleLowerCase("ru");
+        const stations=Array.from(uniqueStations.values()).sort((a,b)=>{
+          const aTitle=String(a.title||"").toLocaleLowerCase("ru").replace(/ё/g,"е");
+          const bTitle=String(b.title||"").toLocaleLowerCase("ru").replace(/ё/g,"е");
           const aExact=aTitle===needle?0:1;
           const bExact=bTitle===needle?0:1;
           if(aExact!==bExact)return aExact-bExact;
