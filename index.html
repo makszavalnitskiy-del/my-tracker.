@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#0b0d12">
 <title>Мой ритм — личный трекер</title>
 <style>
-:root{--bg:#f5f7fa;--panel:#ffffff;--panel2:#edf2f7;--line:#d8e0e9;--text:#17212f;--muted:#526174;--accent:#174d7a;--green:#087147;--orange:#8b4c00;--red:#a3202d;--surface:#ffffff;--surface-soft:#f0f4f8;--surface-input:#ffffff;--accent-soft:#e8f0f8}
+:root{--bg:#f5f2ff;--panel:#ffffff;--panel2:#eee9ff;--line:#ded6f5;--text:#211b35;--muted:#716987;--accent:#7657d6;--green:#168f83;--orange:#a66a22;--red:#b83c61;--surface:#ffffff;--surface-soft:#f2effb;--surface-input:#ffffff;--accent-soft:#ebe5ff}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% -10%,#242044 0,transparent 38%),var(--bg);color:var(--text);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
 button,input,select{font:inherit}button{cursor:pointer}.app{max-width:760px;margin:auto;padding:22px 16px 48px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}.brand{font-size:13px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}.date{font-size:13px;color:var(--muted)}h1{font-size:29px;line-height:1.1;margin:7px 0 4px;letter-spacing:-.04em}.sub{color:var(--muted);font-size:14px}.card{background:linear-gradient(145deg,rgba(25,31,44,.97),rgba(17,21,30,.97));border:1px solid var(--line);border-radius:19px;padding:17px;margin:13px 0;box-shadow:0 10px 35px #0002}.hero{padding:20px}.row{display:flex;align-items:center;justify-content:space-between;gap:12px}.progress-wrap{height:9px;background:#272e3c;border-radius:20px;overflow:hidden;margin:13px 0 7px}.progress{height:100%;width:0;background:linear-gradient(90deg,var(--accent),#6bd8c2);border-radius:20px;transition:width .2s}.big{font-size:30px;font-weight:750;letter-spacing:-.04em}.muted{color:var(--muted)}.tiny{font-size:12px;color:var(--muted)}.section-title{font-size:17px;font-weight:700;margin:24px 2px 8px;letter-spacing:-.02em}.pill{border:1px solid var(--line);background:#1a2030;color:var(--text);padding:8px 11px;border-radius:12px;font-size:13px}.pill.active{background:#302b53;border-color:#6f62c3;color:#e7e2ff}.tabs{display:flex;gap:7px;overflow:auto;padding:2px 0 5px}.tab{white-space:nowrap}.task{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #242b38}.task:last-child{border-bottom:0}.check{appearance:none;width:22px;height:22px;border:1.5px solid #59647a;border-radius:7px;flex:none;background:#111620;position:relative}.check:checked{background:var(--green);border-color:var(--green)}.check:checked:after{content:"✓";position:absolute;color:#08150f;font-weight:900;left:4px;top:-1px}.task.done .task-name{text-decoration:line-through;color:#788397}.task-name{font-weight:550}.task-desc{font-size:12px;color:var(--muted);margin-top:2px}
 .daily-tools{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 0 6px;flex-wrap:wrap}
@@ -124,14 +124,14 @@ button{min-height:40px;display:inline-flex;align-items:center;justify-content:ce
 .ruz-day-strip button .ruz-weekday{font-size:11px}
 .ruz-day-strip button .ruz-daynum{font-size:16px;font-weight:750;color:var(--text)}
 .ruz-day-strip button.today .ruz-daynum,.ruz-day-strip button.today .ruz-weekday{color:var(--green)}
-.ruz-day-strip button.selected{background:#203b30;border-color:#397c59;color:#fff}
-.ruz-day-strip button.selected .ruz-daynum{color:#8be0ad}
+.ruz-day-strip button.selected{background:#eee8ff;border-color:#8b73e3;color:#5637b2}
+.ruz-day-strip button.selected .ruz-daynum{color:#5637b2}
 .ruz-month-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin:10px 0 15px}
 .ruz-month-grid .weekday{font-size:11px;text-align:center;color:var(--muted);padding:5px 0}
 .ruz-month-grid button{position:relative;min-width:0;min-height:53px;border:1px solid transparent;border-radius:12px;background:#10151e;color:var(--text);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
 .ruz-month-grid button.outside{opacity:.3}
 .ruz-month-grid button.today{color:var(--green);border-color:#397c59}
-.ruz-month-grid button.selected{background:#203b30;color:#9be2b6;border-color:#397c59;font-weight:800}
+.ruz-month-grid button.selected{background:#eee8ff;color:#5637b2;border-color:#8b73e3;font-weight:800}
 .ruz-month-grid button .dots{height:5px;display:flex;gap:3px}
 .ruz-month-grid button .dots i{width:5px;height:5px;border-radius:50%;background:var(--green)}
 .ruz-week-card{border:1px solid var(--line);background:#10151e;border-radius:15px;padding:13px;margin:10px 0}
@@ -318,9 +318,9 @@ body{background:var(--bg)!important;color:var(--text)!important;transition:backg
 .ruz-week-card-head .ruz-count{background:#e5f3ec;color:#145d3b}
 button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 55%,transparent);outline-offset:2px}
 body[data-theme="dark"]{
-  --bg:#0c121b;--panel:#151e2a;--panel2:#1c2837;--line:#334255;--text:#edf3fa;--muted:#b1bfce;
-  --accent:#8db9ee;--green:#75d6a7;--orange:#ffd18a;--red:#ff9da6;
-  --surface:#151f2c;--surface-soft:#1b2938;--surface-input:#101a26;--accent-soft:#243c58;
+  --bg:#100d1b;--panel:#1b1629;--panel2:#251e38;--line:#40365d;--text:#f3efff;--muted:#b9aecf;
+  --accent:#a995ff;--green:#62cdbb;--orange:#f1c17c;--red:#ff9bb5;
+  --surface:#1b1629;--surface-soft:#251e38;--surface-input:#151122;--accent-soft:#342858;
 }
 body[data-theme="dark"] .card{box-shadow:0 8px 26px rgba(0,0,0,.18)!important}
 body[data-theme="dark"] .progress-wrap,body[data-theme="dark"] .barline,body[data-theme="dark"] .live-track,body[data-theme="dark"] .pair-track{background:#263548}
@@ -328,16 +328,16 @@ body[data-theme="dark"] .check{background:#101a26;border-color:#73849a}
 body[data-theme="dark"] .check:checked{background:var(--green);border-color:var(--green)}
 body[data-theme="dark"] .check:checked:after{color:#092216}
 body[data-theme="dark"] .btn.danger{background:#48262c;color:#ffb8bf}
-body[data-theme="dark"] .ruz-day-strip button.selected,body[data-theme="dark"] .ruz-month-grid button.selected{background:#203b30;border-color:#397c59;color:#9be2b6}
-body[data-theme="dark"] .ruz-day-strip button.selected .ruz-daynum{color:#9be2b6}
-body[data-theme="dark"] .ruz-week-card-head .ruz-count{background:#203b30;color:#9be2b6}
+body[data-theme="dark"] .ruz-day-strip button.selected,body[data-theme="dark"] .ruz-month-grid button.selected{background:#382b5c;border-color:#8f79e8;color:#e0d7ff}
+body[data-theme="dark"] .ruz-day-strip button.selected .ruz-daynum{color:#e0d7ff}
+body[data-theme="dark"] .ruz-week-card-head .ruz-count{background:#382b5c;color:#e0d7ff}
 body[data-theme="dark"] .site-reload,body[data-theme="dark"] .site-theme{background:var(--surface-soft);color:var(--text);border-color:var(--line)}
 @media(max-width:430px){.site-theme{width:38px;height:38px;min-height:38px}.top-right{gap:6px}}
 
 /* Современный адаптивный интерфейс электричек — изолирован от остальных разделов */
 .train-module{
-  --tm-bg:#f5f7fa;--tm-card:#ffffff;--tm-text:#17212f;--tm-muted:#465365;
-  --tm-line:#cbd5e1;--tm-blue:#123f70;--tm-blue-soft:#e8f0f8;
+  --tm-bg:#f7f4ff;--tm-card:#ffffff;--tm-text:#241d3a;--tm-muted:#716987;
+  --tm-line:#ded6f5;--tm-blue:#7657d6;--tm-blue-soft:#eee8ff;
   --tm-green:#075b3b;--tm-green-soft:#e7f5ee;--tm-amber:#763f00;--tm-amber-soft:#fff3d9;
   --tm-red:#8e1924;--tm-red-soft:#fdebed;--tm-passed-bg:#eef1f4;
   width:100%;margin:26px 0 18px;padding:clamp(14px,2.8vw,28px);
@@ -347,10 +347,10 @@ body[data-theme="dark"] .site-reload,body[data-theme="dark"] .site-theme{backgro
   font-size:15px;line-height:1.45;color-scheme:light;
 }
 .train-module[data-theme="dark"]{
-  --tm-bg:#111925;--tm-card:#1b2635;--tm-text:#f2f6fb;--tm-muted:#c0ccda;
-  --tm-line:#405066;--tm-blue:#8db9ee;--tm-blue-soft:#243c58;
-  --tm-green:#75d6a7;--tm-green-soft:#173e31;--tm-amber:#ffd18a;--tm-amber-soft:#49371e;
-  --tm-red:#ff9da6;--tm-red-soft:#48262c;--tm-passed-bg:#202a36;
+  --tm-bg:#151122;--tm-card:#1d1730;--tm-text:#f3efff;--tm-muted:#b9aecf;
+  --tm-line:#40365d;--tm-blue:#ad98ff;--tm-blue-soft:#342858;
+  --tm-green:#62cdbb;--tm-green-soft:#183c3a;--tm-amber:#f1c17c;--tm-amber-soft:#49371e;
+  --tm-red:#ff9bb5;--tm-red-soft:#482638;--tm-passed-bg:#282137;
   border-color:#344255;box-shadow:0 8px 28px rgba(0,0,0,.18);color-scheme:dark;
 }
 .train-module *{box-sizing:border-box}
@@ -362,6 +362,10 @@ body[data-theme="dark"] .site-reload,body[data-theme="dark"] .site-theme{backgro
 .tm-brand-name{font-size:12px;font-weight:850;letter-spacing:.11em;color:var(--tm-text)}
 .tm-brand-caption{margin-top:2px;font-size:9px;font-weight:750;letter-spacing:.12em;color:var(--tm-muted)}
 .tm-header-actions{display:flex;align-items:center;gap:8px}
+.tm-collapse-btn{min-height:40px;padding:0 12px;border:1px solid var(--tm-line);border-radius:11px;background:var(--tm-blue-soft);color:var(--tm-blue);font-size:11px;font-weight:800;white-space:nowrap}
+.train-module.is-collapsed{padding-bottom:14px}
+.train-module.is-collapsed>:not(.tm-header){display:none!important}
+.train-module.is-collapsed .tm-header{padding-bottom:0;border-bottom:0}
 .tm-live{display:inline-flex;align-items:center;gap:7px;color:var(--tm-muted);font-size:11px;font-weight:650;white-space:nowrap}
 .tm-live i{width:8px;height:8px;border-radius:50%;background:#8895a5}
 .tm-live.success i{background:#168451}.tm-live.loading i{background:#b66a08;animation:tmPulse 1s infinite}.tm-live.error i{background:#bd3341}
@@ -518,6 +522,7 @@ body[data-theme="dark"] .site-reload,body[data-theme="dark"] .site-theme{backgro
     </div>
     <div class="tm-header-actions">
       <span class="tm-live" id="trainDataStatus"><i></i> Ожидает поиска</span>
+      <button class="tm-collapse-btn" type="button" id="trainCollapseToggle" aria-expanded="true">К расписанию учёбы ↓</button>
       <button class="tm-icon-btn" type="button" id="trainFavoriteToggle" aria-label="Добавить маршрут в избранное" title="Избранное">☆</button>
       
     </div>
@@ -603,7 +608,7 @@ body[data-theme="dark"] .site-reload,body[data-theme="dark"] .site-theme{backgro
   </nav>
 </section>
 
-  <div class="section-title">Расписание ГУЗ</div>
+  <div class="section-title" id="studyScheduleTitle">Расписание ГУЗ</div>
 <section class="card">
   <div class="ruz-view-switch" role="group" aria-label="Вид расписания">
     <button type="button" data-ruz-view="day">По дням</button>
@@ -1106,6 +1111,21 @@ function trainSetTheme(){
   }
   const meta=document.querySelector('meta[name="theme-color"]');
   if(meta)meta.setAttribute("content",theme==="dark"?"#111925":"#f5f7fa");
+}
+function trainSetCollapsed(collapsed,scroll=true){
+  const module=document.getElementById("trainModule");
+  const button=document.getElementById("trainCollapseToggle");
+  if(!module||!button)return;
+  module.classList.toggle("is-collapsed",!!collapsed);
+  button.textContent=collapsed?"Показать электрички ↑":"К расписанию учёбы ↓";
+  button.setAttribute("aria-expanded",collapsed?"false":"true");
+  button.title=collapsed?"Развернуть расписание электричек":"Свернуть электрички и перейти к учёбе";
+  data.settings.trainCollapsed=!!collapsed;
+  save();
+  if(scroll){
+    const target=document.getElementById(collapsed?"studyScheduleTitle":"trainModule");
+    if(target)target.scrollIntoView({behavior:"smooth",block:"start"});
+  }
 }
 function trainSetStatus(state,label){
   const el=document.getElementById("trainDataStatus");
@@ -1610,6 +1630,8 @@ async function trainSearch(){
 function initTrainModule(){
   if(!document.getElementById("trainModule"))return;
   trainSetTheme();
+  trainSetCollapsed(!!data.settings.trainCollapsed,false);
+  document.getElementById("trainCollapseToggle").addEventListener("click",()=>trainSetCollapsed(!document.getElementById("trainModule").classList.contains("is-collapsed")));
   trainSyncInputs();
   trainBindStation("trainFrom","from");
   trainBindStation("trainTo","to");
