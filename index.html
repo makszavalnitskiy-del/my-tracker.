@@ -1759,7 +1759,34 @@ function initTrainModule(){
     document.querySelectorAll("[data-train-date]").forEach(button=>button.classList.remove("active"));
   }
 }
-  function renderStats(){let now=new Date(),total=0,active=0,last7Done=0,last7Total=0,streak=0;for(let i=0;i<7;i++){let dt=new Date(now);dt.setDate(now.getDate()-i);let k=localDate(dt),d=data.days[k];if(d){let count=BASE_TASKS.length+(d.custom||[]).length,done=Object.values(d.checks||{}).filter(Boolean).length;total+=done;if(done)active++;last7Done+=done;last7Total+=count;if(i===streak&&done>0)streak++;else if(i===streak&&i===0&&done===0){}else if(i===streak)break}else{if(i===0){}else if(i===streak)break}}document.getElementById("weekRate").textContent=(last7Total?Math.round(last7Done/last7Total*100):0)+"%";document.getElementById("streak").textContent=streak;document.getElementById("totalDone").textContent=total;document.getElementById("activeDays").textContent=active;renderAchievements()}
+  function renderStats(){
+ const days=data.days&&typeof data.days==="object"?data.days:{};
+ let total=0,active=0,last7Done=0,last7Total=0;
+ const activeDates=new Set();
+ Object.entries(days).forEach(([date,day])=>{
+  if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(date)||!day||typeof day!=="object")return;
+  const done=Object.values(day.checks||{}).filter(Boolean).length;
+  total+=done;
+  if(done){active++;activeDates.add(date);}
+ });
+ for(let i=0;i<7;i++){
+  const dt=new Date();dt.setDate(dt.getDate()-i);
+  const day=days[localDate(dt)];
+  if(day){
+   const count=BASE_TASKS.length+(Array.isArray(day.custom)?day.custom.length:0);
+   last7Done+=Object.values(day.checks||{}).filter(Boolean).length;
+   last7Total+=count;
+  }else last7Total+=BASE_TASKS.length;
+ }
+ let streak=0,cursor=new Date();
+ if(!activeDates.has(localDate(cursor)))cursor.setDate(cursor.getDate()-1);
+ while(activeDates.has(localDate(cursor))&&streak<3660){streak++;cursor.setDate(cursor.getDate()-1);}
+ document.getElementById("weekRate").textContent=(last7Total?Math.round(last7Done/last7Total*100):0)+"%";
+ document.getElementById("streak").textContent=streak;
+ document.getElementById("totalDone").textContent=total;
+ document.getElementById("activeDays").textContent=active;
+ renderAchievements();
+}
 let achievementFilter="all";
 function renderAchievements(){
  const days=data.days&&typeof data.days==="object"?data.days:{};
@@ -1799,8 +1826,8 @@ function renderAchievements(){
  const subtitle=document.getElementById("achievementSubtitle");
  const nextNode=document.getElementById("achievementNext");
  if(headline)headline.textContent=unlocked===definitions.length?"Ты собрал всю коллекцию!":unlocked===0?"Твоя история начинается здесь":"Ты уже открыл "+unlocked+" "+(unlocked===1?"достижение":unlocked<5?"достижения":"достижений");
- if(subtitle)subtitle.textContent=total? "Уже "+total+" выполненных "+(total===1?"задача":"задач")+". Продолжай в своём темпе.":"Здесь будут собираться твои личные победы — от первого шага до больших серий.";
- if(nextNode)nextNode.textContent=next?"Ближайшая цель: "+next.name+" · ещё "+Math.max(0,next.target-next.value)+" "+next.unit+".":"Все достижения открыты — это впечатляющий путь!";
+ if(subtitle)subtitle.textContent=total? "Выполнено задач: "+total+". Продолжай в своём темпе.":"Здесь будут собираться твои личные победы — от первого шага до больших серий.";
+ if(nextNode)nextNode.textContent=next?"Ближайшая цель: "+next.name+" · осталось "+Math.max(0,next.target-next.value)+" до цели.":"Все достижения открыты — это впечатляющий путь!";
  const heat=document.getElementById("achievementHeatmap");
  if(heat){
   const today=new Date();today.setHours(12,0,0,0);
