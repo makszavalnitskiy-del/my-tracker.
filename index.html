@@ -572,6 +572,16 @@ body[data-theme="dark"] .site-reload,body[data-theme="dark"] .site-theme{backgro
 .assistant-composer{display:flex;align-items:center;gap:10px;margin-top:14px;padding:8px 9px 8px 13px;border:1px solid #39334b;border-radius:13px;background:#0d0f19}.assistant-composer-placeholder{flex:1;min-width:0;font-size:11px;color:#817b91;line-height:1.4}.assistant-composer button{width:34px;height:34px;min-height:34px;border:0;border-radius:10px;background:#4b4266;color:#b8adcf;font-size:19px;opacity:.55;cursor:not-allowed}.assistant-footnote{margin-top:9px;text-align:center;font-size:10px;line-height:1.45;color:#89829c}
 @media(max-width:390px){.assistant-shell{padding:13px}.assistant-capabilities{gap:5px}.assistant-capability{padding:9px 6px}.assistant-capability strong{font-size:10px}.assistant-capability small{font-size:9px}.assistant-welcome-title{font-size:18px}}
 
+
+.assistant-welcome-compact{padding:17px 7px 13px}.assistant-welcome-compact .assistant-orb{width:50px;height:50px;border-radius:17px;margin-bottom:10px}.assistant-welcome-compact .assistant-orb span{font-size:26px}
+.assistant-quick-prompts{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 12px}.assistant-quick-prompts button{border:1px solid #55476f;background:#ffffff0b;color:#d8cef0;border-radius:20px;padding:8px 11px;font-size:11px;min-height:34px}
+.assistant-messages{display:flex;flex-direction:column;gap:10px;max-height:390px;overflow:auto;padding:12px 2px;border-top:1px solid #39334b;border-bottom:1px solid #39334b;scroll-behavior:smooth}
+.assistant-message{max-width:88%;padding:10px 12px;border-radius:14px;font-size:12px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}.assistant-message-bot{align-self:flex-start;background:#ffffff0d;border:1px solid #39334b;color:#eee8fa;border-top-left-radius:5px}.assistant-message-user{align-self:flex-end;background:#6045a0;color:#fff;border-top-right-radius:5px}
+.assistant-message-author{display:block;font-size:9px;letter-spacing:.1em;font-weight:800;color:#b9a5ff;margin-bottom:4px}.assistant-message-user .assistant-message-author{color:#e4d8ff}
+.assistant-composer{align-items:flex-end}.assistant-composer textarea{flex:1;min-width:0;max-height:110px;resize:vertical;border:0;outline:0;background:transparent;color:#fff;font:inherit;font-size:12px;line-height:1.5;padding:8px 2px}.assistant-composer textarea::placeholder{color:#817b91}.assistant-composer button{flex:0 0 36px;width:36px;height:36px;min-height:36px;border:0;border-radius:11px;background:linear-gradient(145deg,#a78bfa,#7153cf);color:#fff;font-size:21px;opacity:1;cursor:pointer}.assistant-composer button:disabled{opacity:.4;cursor:wait}
+.assistant-status-dot.is-ready{background:#6ee7b7;box-shadow:0 0 10px #6ee7b7}.assistant-status-dot.is-error{background:#fb7185;box-shadow:0 0 10px #fb7185}.assistant-message-pending{opacity:.65}
+@media(max-width:390px){.assistant-message{max-width:94%}.assistant-quick-prompts button{font-size:10px;padding:7px 9px}}
+
 </style>
 </head>
 <body>
@@ -719,18 +729,24 @@ body[data-theme="dark"] .site-reload,body[data-theme="dark"] .site-theme{backgro
     <div class="assistant-subtitle">Будущее место для ChatGPT или бота, который будет знать возможности «Моего ритма».</div>
   </div>
   <section class="assistant-shell" aria-label="Пространство помощника">
-    <div class="assistant-topline"><span class="assistant-status-dot"></span><span>Пространство готовится к подключению</span><span class="assistant-beta">SOON</span></div>
-    <div class="assistant-welcome"><div class="assistant-orb" aria-hidden="true"><span>✦</span></div>
-      <div class="assistant-welcome-title">Привет! Я буду твоим помощником.</div>
-      <p>Здесь можно будет задавать вопросы о сайте, разбираться с расписанием, получать подсказки и управлять возможностями «Моего ритма» обычным языком.</p>
+    <div class="assistant-topline"><span class="assistant-status-dot" id="assistantStatusDot"></span><span id="assistantStatusText">Подключаем сервер помощника</span><span class="assistant-beta">AI</span></div>
+    <div class="assistant-welcome assistant-welcome-compact"><div class="assistant-orb" aria-hidden="true"><span>✦</span></div>
+      <div class="assistant-welcome-title">Привет! Чем помочь?</div>
+      <p>Я помощник «Моего ритма». Могу объяснить функции сайта и помочь разобраться с твоим расписанием.</p>
     </div>
-    <div class="assistant-capabilities">
-      <div class="assistant-capability"><span>▦</span><strong>Расписание</strong><small>Пары и свободное время</small></div>
-      <div class="assistant-capability"><span>↗</span><strong>Навигация</strong><small>Помощь с функциями сайта</small></div>
-      <div class="assistant-capability"><span>✧</span><strong>Умные ответы</strong><small>Диалог с ИИ-помощником</small></div>
+    <div class="assistant-quick-prompts">
+      <button type="button" data-assistant-prompt="Что ты умеешь делать на этом сайте?">Что ты умеешь?</button>
+      <button type="button" data-assistant-prompt="Помоги разобраться с моим расписанием.">Моё расписание</button>
+      <button type="button" data-assistant-prompt="Объясни, как пользоваться разделом электричек.">Электрички</button>
     </div>
-    <div class="assistant-composer" aria-label="Поле будущего чата"><div class="assistant-composer-placeholder">Чат станет доступен после подключения помощника…</div><button type="button" disabled aria-label="Отправка сообщений станет доступна позже">↑</button></div>
-    <div class="assistant-footnote">Подключение появится позже. Сейчас помощник не отправляет сообщения и не использует внешние ИИ-сервисы.</div>
+    <div class="assistant-messages" id="assistantMessages" role="log" aria-live="polite" aria-label="Сообщения помощника">
+      <div class="assistant-message assistant-message-bot"><span class="assistant-message-author">ПОМОЩНИК</span><div>Напиши мне вопрос — я постараюсь помочь. История этого диалога пока хранится только в текущей вкладке.</div></div>
+    </div>
+    <form class="assistant-composer" id="assistantForm" aria-label="Отправить сообщение помощнику">
+      <textarea id="assistantInput" rows="1" maxlength="2000" placeholder="Напиши сообщение…" aria-label="Твоё сообщение"></textarea>
+      <button type="submit" id="assistantSend" aria-label="Отправить сообщение">↑</button>
+    </form>
+    <div class="assistant-footnote" id="assistantFootnote">Для работы нужен сервер Cloudflare Worker и секретный ключ OpenAI. Ключ не хранится на сайте.</div>
   </section>
 
 
@@ -1767,7 +1783,7 @@ document.getElementById("importBtn").onclick=()=>document.getElementById("import
 document.getElementById("importFile").onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let obj=JSON.parse(await f.text());if(!obj.days||!obj.settings)throw Error();data=obj;save();const saved=data.settings.trainSearch||{},legacy=Array.isArray(data.settings.routes)&&data.settings.routes.length?data.settings.routes[0]:{};trainSearchState={from:saved.from||legacy.from||"",fromCode:saved.fromCode||legacy.fromCode||"",fromMeta:saved.fromMeta||legacy.fromMeta||"",to:saved.to||legacy.to||"",toCode:saved.toCode||legacy.toCode||"",toMeta:saved.toMeta||legacy.toMeta||"",date:saved.date||localDate()};trainResetResults("Резервная копия восстановлена. Выполните поиск, чтобы загрузить актуальные данные.");trainSyncInputs();trainRenderFavorites();trainUpdateFavoriteButton();alert("Резервная копия загружена")}catch(err){alert("Не удалось прочитать файл резервной копии")}};
 document.getElementById("todayLabel").textContent=new Date().toLocaleDateString("ru-RU",{day:"numeric",month:"short"});
 document.getElementById("siteReloadBtn").addEventListener("click",()=>window.location.reload());
-trainSetTheme();initAchievements();renderStats();initTrainModule();
+trainSetTheme();initAchievements();renderStats();initTrainModule();initAssistant();
 document.getElementById("ruzGroup").value=data.settings.ruzGroup||"Г.ПГ.26.С1";
 document.getElementById("ruzSubgroup").value=data.settings.ruzSubgroup||"";
 document.getElementById("ruzDate").value=localDate();
@@ -1780,5 +1796,92 @@ document.getElementById("ruzPrevPeriod").onclick=()=>shiftRuzPeriod(-1);
 document.getElementById("ruzNextPeriod").onclick=()=>shiftRuzPeriod(1);
 loadRuzGroups();
 setInterval(()=>{if(ruzWeekData[ruzSelectedDate])renderRuzWeek();},60000);
+
+/* Подключение ИИ-помощника. API-ключ хранится только в Cloudflare Worker. */
+const ASSISTANT_API="https://moy-ritm-assistant.maks-zavalnitskiy.workers.dev";
+let assistantHistory=[];
+let assistantBusy=false;
+function assistantSetStatus(state,message){
+ const dot=document.getElementById("assistantStatusDot"),label=document.getElementById("assistantStatusText");
+ if(!dot||!label)return;
+ dot.classList.toggle("is-ready",state==="ready");
+ dot.classList.toggle("is-error",state==="error");
+ label.textContent=message;
+}
+function assistantAddMessage(role,text,pending=false){
+ const host=document.getElementById("assistantMessages");
+ const item=document.createElement("div");
+ item.className="assistant-message "+(role==="user"?"assistant-message-user":"assistant-message-bot")+(pending?" assistant-message-pending":"");
+ const author=document.createElement("span");author.className="assistant-message-author";author.textContent=role==="user"?"ТЫ":"ПОМОЩНИК";
+ const body=document.createElement("div");body.textContent=text;
+ item.append(author,body);host.appendChild(item);host.scrollTop=host.scrollHeight;
+ return {item,body};
+}
+function assistantBuildContext(){
+ const schedule=document.getElementById("schedule");
+ const train=document.getElementById("trainModule");
+ const group=document.getElementById("ruzGroup");
+ const days=data.days&&typeof data.days==="object"?data.days:{};
+ const completed=Object.values(days).reduce((sum,day)=>sum+Object.values(day&&day.checks||{}).filter(Boolean).length,0);
+ return {
+  app:"Мой ритм",
+  currentDate:localDate(),
+  selectedStudyGroup:group?group.value.trim():"",
+  visibleStudySchedule:schedule?(schedule.innerText||"").slice(0,10000):"",
+  visibleTrainInfo:train?(train.innerText||"").slice(0,5000):"",
+  achievements:{completedActions:completed,activeDays:Object.values(days).filter(day=>Object.values(day&&day.checks||{}).some(Boolean)).length},
+  availableSections:["Расписание ГУЗ/РУЗ","Пригородные электрички и избранные маршруты","Мои достижения","Настройки темы","Резервное копирование"],
+  capabilitiesNote:"Ассистент пока работает в режиме чтения и консультаций. Он не может менять данные или выполнять действия на сайте."
+ };
+}
+async function assistantCheckHealth(){
+ try{
+  const response=await fetch(ASSISTANT_API+"/health",{method:"GET"});
+  if(!response.ok)throw Error("Сервер не ответил");
+  const result=await response.json();
+  if(!result.ok)throw Error("Сервер пока не настроен");
+  assistantSetStatus("ready","Сервер подключён");
+  document.getElementById("assistantFootnote").textContent="Подключение защищено: секретный ключ хранится на сервере. Диалог не сохраняется после закрытия вкладки.";
+ }catch(error){
+  assistantSetStatus("error","Сервер ещё не подключён");
+  document.getElementById("assistantFootnote").textContent="Интерфейс готов. Для запуска нужно развернуть Worker и добавить OPENAI_API_KEY в его секреты.";
+ }
+}
+async function assistantSendMessage(text){
+ const message=String(text||"").trim();
+ if(!message||assistantBusy)return;
+ assistantBusy=true;
+ const input=document.getElementById("assistantInput"),send=document.getElementById("assistantSend");
+ assistantAddMessage("user",message);
+ assistantHistory.push({role:"user",content:message});
+ if(assistantHistory.length>12)assistantHistory=assistantHistory.slice(-12);
+ input.value="";send.disabled=true;
+ const pending=assistantAddMessage("assistant","Думаю над ответом…",true);
+ try{
+  const response=await fetch(ASSISTANT_API+"/assistant",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:assistantHistory,context:assistantBuildContext()})});
+  const result=await response.json().catch(()=>({}));
+  if(!response.ok)throw Error(result.error||"Не удалось связаться с помощником ("+response.status+")");
+  if(!result.reply)throw Error("Сервер вернул пустой ответ");
+  pending.body.textContent=result.reply;pending.item.classList.remove("assistant-message-pending");
+  assistantHistory.push({role:"assistant",content:result.reply});
+  assistantSetStatus("ready","Помощник на связи");
+ }catch(error){
+  pending.body.textContent=error.message||"Не удалось отправить сообщение. Попробуй ещё раз.";
+  pending.item.classList.remove("assistant-message-pending");
+  assistantSetStatus("error","Нет соединения с помощником");
+ }finally{
+  assistantBusy=false;send.disabled=false;input.focus();
+  document.getElementById("assistantMessages").scrollTop=document.getElementById("assistantMessages").scrollHeight;
+ }
+}
+function initAssistant(){
+ const form=document.getElementById("assistantForm"),input=document.getElementById("assistantInput");
+ if(!form||!input)return;
+ form.addEventListener("submit",event=>{event.preventDefault();assistantSendMessage(input.value)});
+ document.querySelectorAll("[data-assistant-prompt]").forEach(button=>button.addEventListener("click",()=>assistantSendMessage(button.dataset.assistantPrompt)));
+ input.addEventListener("keydown",event=>{if(event.key==="Enter"&&!event.shiftKey){event.preventDefault();form.requestSubmit()}});
+ assistantCheckHealth();
+}
+
 </script>
 </body></html>
