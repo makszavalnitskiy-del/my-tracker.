@@ -50,8 +50,13 @@ export default {
 
     const length = Number(request.headers.get("Content-Length") || 0);
     if (length > MAX_BODY_BYTES) return json({ error: "Сообщение слишком большое" }, 413, origin);
+    let rawBody;
+    try { rawBody = await request.text(); } catch { return json({ error: "Не удалось прочитать запрос" }, 400, origin); }
+    if (new TextEncoder().encode(rawBody).byteLength > MAX_BODY_BYTES) {
+      return json({ error: "Сообщение слишком большое" }, 413, origin);
+    }
     let body;
-    try { body = await request.json(); } catch { return json({ error: "Некорректный JSON" }, 400, origin); }
+    try { body = JSON.parse(rawBody); } catch { return json({ error: "Некорректный JSON" }, 400, origin); }
     const rawMessages = Array.isArray(body.messages) ? body.messages.slice(-MAX_MESSAGES) : [];
     const messages = rawMessages
       .filter(item => item && (item.role === "user" || item.role === "assistant") && typeof item.content === "string")
@@ -92,8 +97,20 @@ export default {
     }
     const result = await apiResponse.json().catch(() => ({}));
     if (!apiResponse.ok) {
-      const message = result && result.error && result.error.message;
-      return json({ error: apiResponse.status === 400 || apiResponse.status === 403 ? "Gemini отклонил запрос. Проверь ключ Google AI Studio и доступ к модели." : (message || "Gemini временно недоступен.") }, 502, origin);
+      const upstreamMessage = result && result.error && result.error.message;
+      if (apiResponse.status === 429) {
+        return json({ error: "Бесплатный лимит Gemini временно исчерпан или запросы поступают слишком часто. Подожди и попробуй позже." }, 429, origin);
+      }
+      if (apiResponse.status === 401 || apiResponse.status === 403) {
+        return json({ error: "Gemini не принял API-ключ или у ключа нет доступа к этой модели. Проверь настройки Google AI Studio." }, 502, origin);
+      }
+      if (apiResponse.status === 400) {
+        return json({ error: "Gemini отклонил формат запроса. Попробуй отправить сообщение короче." }, 502, origin);
+      }
+      if (apiResponse.status === 404) {
+        return json({ error: "Модель Gemini 2.5 Flash сейчас недоступна для этого API-ключа." }, 502, origin);
+      }
+      return json({ error: upstreamMessage || "Gemini временно недоступен. Попробуй позже." }, 502, origin);
     }
     const reply = (result.candidates?.[0]?.content?.parts || [])
       .filter(part => typeof part.text === "string")
