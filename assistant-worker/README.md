@@ -47,3 +47,20 @@ Worker — защищённый серверный мост между GitHub Pa
 - Gemini API: https://ai.google.dev/gemini-api/docs
 - Тарифы: https://ai.google.dev/gemini-api/docs/pricing
 - Google AI Studio: https://aistudio.google.com/
+
+
+## Рекомендуемое развёртывание без копирования кода
+
+Worker можно подключить напрямую к GitHub, чтобы Cloudflare автоматически публиковал обновления из репозитория:
+
+1. Cloudflare Dashboard → **Workers & Pages** → **Create application** → **GitHub**.
+2. Выбери репозиторий `makszavalnitskiy-del/my-tracker.` и ветку `main`.
+3. В настройках сборки укажи **Root directory**: `assistant-worker`.
+4. **Build command** оставь пустой; **Deploy command**: `npx wrangler deploy`.
+5. Имя Worker должно быть точно `moy-ritm-assistant` — оно задано в `wrangler.toml`.
+6. Нажми **Save and Deploy**. Если Worker уже существует, подключение GitHub настраивается в его **Settings → Builds → Connect**.
+7. После подключения добавь runtime-секрет `GEMINI_API_KEY` в **Settings → Variables and Secrets** (тип **Secret**) и выполни Deploy.
+
+После этого новые коммиты в `main` смогут автоматически развёртываться через Workers Builds. Секрет Gemini добавляется именно в runtime **Variables and Secrets**, а не в build variables. Не помещай ключ в GitHub.
+
+Документация Cloudflare: https://developers.cloudflare.com/workers/ci-cd/builds/ и https://developers.cloudflare.com/workers/configuration/secrets/
