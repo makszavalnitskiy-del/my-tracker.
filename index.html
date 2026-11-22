@@ -1839,9 +1839,15 @@ async function assistantCheckHealth(){
   const response=await fetch(ASSISTANT_API+"/health",{method:"GET"});
   if(!response.ok)throw Error("Сервер не ответил");
   const result=await response.json();
-  if(!result.ok)throw Error("Сервер пока не настроен");
-  assistantSetStatus("ready","Сервер подключён");
-  document.getElementById("assistantFootnote").textContent="Подключение защищено: ключ Gemini хранится только на сервере. Это текстовый помощник без генерации изображений; диалог не сохраняется после закрытия вкладки.";
+  if(!result.ok)throw Error("Сервер помощника пока недоступен");
+  if(!result.configured){
+   assistantSetStatus("error","Нужно добавить API-ключ");
+   document.getElementById("assistantFootnote").textContent="Worker доступен, но Gemini ещё не настроен. Добавь секрет GEMINI_API_KEY в Cloudflare → Workers & Pages → moy-ritm-assistant → Settings → Variables and Secrets, затем выполни Deploy.";
+   return;
+  }
+  if(result.provider!=="Gemini"||result.mode!=="text-only")throw Error("Сервер работает в неожиданном режиме");
+  assistantSetStatus("ready","Gemini подключён");
+  document.getElementById("assistantFootnote").textContent="Gemini подключён. Ключ хранится только в Cloudflare Secret. Помощник отвечает текстом; история диалога не сохраняется после закрытия вкладки.";
  }catch(error){
   assistantSetStatus("error","Сервер ещё не подключён");
   document.getElementById("assistantFootnote").textContent="Интерфейс готов. Для запуска нужно развернуть Worker и добавить GEMINI_API_KEY из Google AI Studio в его секреты.";
