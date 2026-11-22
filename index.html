@@ -1841,10 +1841,10 @@ async function assistantCheckHealth(){
   const result=await response.json();
   if(!result.ok)throw Error("Сервер пока не настроен");
   assistantSetStatus("ready","Сервер подключён");
-  document.getElementById("assistantFootnote").textContent="Подключение защищено: секретный ключ хранится на сервере. Диалог не сохраняется после закрытия вкладки.";
+  document.getElementById("assistantFootnote").textContent="Подключение защищено: ключ Gemini хранится только на сервере. Это текстовый помощник без генерации изображений; диалог не сохраняется после закрытия вкладки.";
  }catch(error){
   assistantSetStatus("error","Сервер ещё не подключён");
-  document.getElementById("assistantFootnote").textContent="Интерфейс готов. Для запуска нужно развернуть Worker и добавить OPENAI_API_KEY в его секреты.";
+  document.getElementById("assistantFootnote").textContent="Интерфейс готов. Для запуска нужно развернуть Worker и добавить GEMINI_API_KEY из Google AI Studio в его секреты.";
  }
 }
 async function assistantSendMessage(text){
